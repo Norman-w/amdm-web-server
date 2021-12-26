@@ -1,0 +1,38 @@
+.main
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0 0 3px 3px #eef8ff;
+    margin-top: 3%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.status
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    /*border: 1px solid blue;*/
+    width: 30%;
+}
+.statusText
+{
+    margin-left: 20px;
+}
+.indexText
+{
+    color: gray;
+}
+.acWorkingText
+{
+    color: darkgreen;
+}
+.acNotWorkingText
+{
+    color: gray;
+}

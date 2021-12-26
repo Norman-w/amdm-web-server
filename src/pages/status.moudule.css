@@ -1,6 +1,0 @@
-@import "../base.css";
-.main
-{
-  composes: flexFullColCenter from '../base.css';
-  height: 100%;
-}
