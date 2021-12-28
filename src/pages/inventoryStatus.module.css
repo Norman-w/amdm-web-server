@@ -1,0 +1,42 @@
+.main
+{
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    /*border: 1px solid #aca209;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.titleLine
+{
+    width: 100%;
+    /*border: 1px skyblue solid;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.chartLine
+{
+    width: 100%;
+    height: 100%;
+    /*height: 50%;*/
+    /*flex-grow: 1;*/
+    /*border: 1px #022432 solid;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*justify-content: space-between;*/
+    /*align-items: center;*/
+    /*position: relative;*/
+    /*transform: scale(0);*/
+    /*transition: 0.4s;*/
+}
+.listArea
+{
+    width: 100%;
+    height: 10000px;
+    border: 2px solid red;
+}

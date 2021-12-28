@@ -80,31 +80,61 @@ class Main extends Component {
       {
           let that = this;
           return <LoginForm onLogin={(user,pass)=>{
-              app.request({
-                  api:'accounts.get',
-                  params:
-                      {
-                          username:user,
-                          passwordMD5: md5(pass),
-                      },
-                  success:(res)=>
+              // app.request({
+              //     api:'accounts.get',
+              //     params:
+              //         {
+              //             username:user,
+              //             passwordMD5: md5(pass),
+              //         },
+              //     success:(res)=>
+              //     {
+              //         if (res.Accounts && res.Accounts.length===1 && res.Accounts[0].Id>0) {
+              //             message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!')
+              //             console.log(res);
+              //             that.setLogonAccount(res.Accounts[0]);
+              //         }
+              //         else
+              //         {
+              //             message.warn('登陆信息校验完成,账号校验失败');
+              //         }
+              //     },
+              //     errProcFunc:(res)=>
+              //     {
+              //         message.error('在登陆校验时发生错误');
+              //         message.error(res.ErrMsg);
+              //     },
+              //     dest:'server'
+              // })
+              console.log('即将执行登陆请求')
+              app.doPost(
                   {
-                      if (res.Accounts && res.Accounts.length===1 && res.Accounts[0].Id>0) {
-                          message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!')
-                          console.log(res);
-                          that.setLogonAccount(res.Accounts[0]);
-                      }
-                      else
+                      url: app.setting.serverSideApiRouterUrl,
+                      headers:
+                          {
+                              'Content-Type': 'application/json;charset=utf-8;',
+                          },
+                      params:
+                          {
+                              method:'accounts.get',
+                              username:user,
+                              passwordMD5:md5(pass),
+                          },
+                      finish:(res)=>
                       {
-                          message.warn('登陆信息校验完成,账号校验失败');
+                          // console.log('执行post完成')
+                          if (res.Accounts && res.Accounts.length===1 && res.Accounts[0].Id>0) {
+                              message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!')
+                              // console.log(res);
+                              that.setLogonAccount(res.Accounts[0]);
+                          }
+                          else
+                          {
+                              message.warn('登陆信息校验完成,账号校验失败');
+                          }
                       }
-                  },
-                  errProcFunc:(res)=>
-                  {
-                      message.error(res.ErrMsg);
-                  },
-                  dest:'server'
-              })
+                  }
+              )
           }}/>;
       }
       //endregion

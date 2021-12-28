@@ -4,8 +4,8 @@ class App {
     debugMode = true;
     setting= {
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
-        clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/?method=',
-        serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/?method=',
+        clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
     };
     account;
     session;
@@ -150,7 +150,7 @@ class App {
                         // console.log('request请求完,result:', result);//result是一个promise
                         result.then(
                             (json) => {
-                                console.log('请求得到了返回 json:', json);
+                                // console.log('请求得到了返回 json:', json);
                                 if (finish)
                                 {
                                     finish(json);//执行回调函数
@@ -162,7 +162,7 @@ class App {
                 }
             )
             .catch(error => {
-                console.log(error);
+                console.log('执行fetch超时',error);
             });
     }
     //endregion
