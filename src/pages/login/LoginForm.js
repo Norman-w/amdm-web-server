@@ -1,7 +1,7 @@
-import { Form, Input, Button, Checkbox } from 'antd';
+import {Space,Form, Input, Button, Checkbox, Drawer} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles  from './LoginForm.module.css'
-import React from "react";
+import React, {useState} from "react";
 import logo from '../../images/logo-s.png';
 
 const LoginForm = ({onLogin}) => {
@@ -16,9 +16,40 @@ const LoginForm = ({onLogin}) => {
     }
   };
 
+  const [settingPanelVisible,setSettingPanelVisible] = useState(false);
+
+  const onCloseSettingPanel = function ()
+  {
+      setSettingPanelVisible(false);
+  }
+
+  const onSaveSetting = function ()
+  {
+      console.log('正在保存设置');
+      setSettingPanelVisible(false);
+  }
   return (
     <div className={styles.login_form_main}>
+      <Drawer title="设置" placement="left" onClose={onCloseSettingPanel} visible={settingPanelVisible}
+              extra={
+                  <Space>
+                      <Button onClick={onCloseSettingPanel}>取消</Button>
+                      <Button type="primary" onClick={()=>{onSaveSetting()}}>
+                          保存
+                      </Button>
+                  </Space>
+              }
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Drawer>
 
+      <div className={styles.titleLine}>
+        <div id={'启动设置按钮'} className={styles.settingButton}
+             onClick={()=>setSettingPanelVisible(true)}
+        >⚙</div>
+      </div>
       <Form
       name="normal_login"
       className={styles.login_form}
