@@ -166,6 +166,7 @@ class App {
             });
     }
     //endregion
+
     // 获取cookie
     getCookie(key) {
         const name = key + "=";

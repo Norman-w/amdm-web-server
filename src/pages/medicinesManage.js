@@ -27,7 +27,7 @@ class MedicinesManage extends Component {
       dataIndex: 'IdOfHIS',
       key: 'IdOfHIS',
       // width:80,
-      // render: text => <div>{text}</div>,
+      // render: text => <div style={{color:'red'}}>{text}</div>,
     },
     {
       title: '名称',
@@ -129,6 +129,13 @@ class MedicinesManage extends Component {
             if(res.Medicines)
             {
               console.log('搜索结果:',res);
+              if (res && res.Medicines && res.Medicines.length>0)
+              {
+                  for (let i = 0; i < res.Medicines.length; i++) {
+                      res.Medicines[i].key=res.Medicines[i].IdOfHIS;
+                  }
+              }
+                console.log('添加了key的药品表:', res);
               let newState = {
                 data:res.Medicines,
                 pagination:{...pagination}

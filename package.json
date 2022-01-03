@@ -38,5 +38,9 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "./"
+  "homepage": "./",
+  "devDependencies": {
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4"
+  }
 }
