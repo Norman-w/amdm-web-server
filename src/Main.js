@@ -25,8 +25,8 @@ import LoginForm from "./pages/login/LoginForm";
 import app from "./app";
 import md5 from 'js-md5';
 import Banner from "./pages/component/Banner";
-import DefaultClient from './AMDM_SDK/DefaultClient';
-import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
+// import DefaultClient from './AMDM_SDK/DefaultClient';
+// import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -75,21 +75,21 @@ class Main extends Component {
   }
   render() {
       //region 执行测试请求
-      return <center><Button
-      onClick={()=>{
-          console.log('点击按钮');
-          let client = new DefaultClient({
-              address:'192.168.2.191',
-              type:'http',
-              path:'/clientside/apiRouter/'
-          });
-          let req = new AccountsGetRequest();
-          client.Execute(req,null,0,(res)=>{
-              console.log('执行函数成功了',res);
-          })
-      }}
-      >测试按钮</Button>
-      </center>
+      // return <center><Button
+      // onClick={()=>{
+      //     console.log('点击按钮');
+      //     let client = new DefaultClient({
+      //         address:'192.168.2.191',
+      //         type:'http',
+      //         path:'/clientside/apiRouter/'
+      //     });
+      //     let req = new AccountsGetRequest();
+      //     client.Execute(req,null,0,(res)=>{
+      //         console.log('执行函数成功了',res);
+      //     })
+      // }}
+      // >测试按钮</Button>
+      // </center>
 
       //endregion
       //region 如果是还没有登陆的状态 先登陆
