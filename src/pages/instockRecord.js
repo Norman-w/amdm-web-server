@@ -144,6 +144,12 @@ class InstockRecord extends Component {
                       console.log(res);
                     }
                     that.setState(newState);
+                  },
+                  timeoutMS:3000,
+                  onTimeout:(res)=>
+                  {
+                    message.warn('获取上药记录超时');
+                    that.setState({loading:false})
                   }
                 }
             )

@@ -3,9 +3,9 @@ import {message} from 'antd'
 class App {
     debugMode = true;
     setting= {
-        clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
-        clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
-        serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
+        clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
+        clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
     };
     account;
     session;
@@ -169,7 +169,7 @@ class App {
 
     //region 使用post的方式请求服务器,第二个版本 2022年01月05日13:48:08
     //当页面已经关闭了的时候,就是已经发了取消信号.如果取消信号已经发出了,那就直接取消不调用回调函数了.
-    doPost2 = function ({url,apiName,params,cancelSignal, onFinish})
+    doPost2 = function ({url,apiName,params,cancelSignal, onFinish, onTimeout,timeoutMS,})
     {
         let isTimeout = false;
         //中断控制器
@@ -205,12 +205,16 @@ class App {
         let requestPromise = (request) => {
             return fetch(request);
         };
-        Promise.race([timeoutPromise(3000), requestPromise(request)])
+        Promise.race([timeoutPromise(timeoutMS?timeoutMS:3000), requestPromise(request)])
             .then(
                 (response)=> {
                     if (isTimeout)
                     {
                         //超时了不需要请求的结果了,给的response其实是个error
+                      if (onTimeout)
+                      {
+                        onTimeout()
+                      }
                     }
                     else
                     {
