@@ -1,0 +1,27 @@
+@import "instockRecord.module.css";
+
+.imagesLine
+{
+    width: 100%;
+    /*border: 1px solid red;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    color: gray;
+    padding-bottom: 10px;
+}
+.image
+{
+    border-radius: 3px;
+    box-shadow: 0 0 5px 1px lightblue;
+    min-width: 160px;
+    min-height: 90px;
+}
+.noImage
+{
+    composes: image;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

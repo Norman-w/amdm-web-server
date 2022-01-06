@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import {DatePicker ,Tag, Input, Button, message, Radio, Table, Modal} from 'antd';
-import classNames from './instockRecord.module.css'
+// import classNames from './instockRecord.module.css'
 import app from "../app";
+import classNames from './fulfillRecord.module.css'
+import DeliveryRecordInfo from "./dialog/DeliveryRecordInfo";
 
 const {Search} = Input;
 const defaultPageSize = 10;
@@ -17,6 +19,7 @@ class FulfillRecord extends Component {
     searchingPrescriptionId:'',
     loading:false,
     pagination: {
+      position:['topRight','bottomRight'],
       current: 1,
       pageSize: defaultPageSize,
     },
@@ -56,16 +59,17 @@ class FulfillRecord extends Component {
       key:'EndTime',
       dataIndex: 'EndTime',
     },
-    {
-      title: '操作',
-      key: 'action',
-      width: 100,
-      render:(a,b)=>{
-        // console.log('渲染收操作是:', a,b);
-        return <Button type={'ghost'} onClick={()=>this.onViewDetail(b)}>查看明细</Button>
-      }
-    }
+    // {
+    //   title: '操作',
+    //   key: 'action',
+    //   width: 100,
+    //   render:(a,b)=>{
+    //     // console.log('渲染收操作是:', a,b);
+    //     return <Button type={'ghost'} onClick={()=>this.onViewDetail(b)}>查看明细</Button>
+    //   }
+    // }
   ];
+
 
   abortController = new AbortController();
 
@@ -210,27 +214,20 @@ class FulfillRecord extends Component {
               // expandedRowRender: record => <p style={{ margin: 20 }}>{record.Details.length}</p>,
               expandedRowRender: record =>
               {
-                let ret = [];
                 for (let i = 0; i < record.Details.length; i++) {
                   let detail = record.Details[i];
                   let locationString = '第'+ (detail.StockIndex?detail.StockIndex+1:1) + '仓 第'
-                    + (detail.FloorIndex?detail.FloorIndex+1:1) + '层 第'
-                    + (detail.GridIndex?detail.GridIndex+1:1) + '槽';
-                  let r= <div key={detail.Id} style={{display:'flex', flexDirection:'row'}}>
-                    <div>品名:</div>
-                    <div>{detail.MedicineName}</div>
-                    <div>条码:</div>
-                    <div>{detail.MedicineBarcode}</div>
-                    <div>位置:</div>
-                    <div>{locationString}</div>
-                    <div>数量:</div>
-                    <div>{detail.Count}</div>
-                  </div>
-                  ret.push(r);
+                      + (detail.FloorIndex?detail.FloorIndex+1:1) + '层 第'
+                      + (detail.GridIndex?detail.GridIndex+1:1) + '槽';
+                  record.Details[i].gridPosition= locationString;
+                  record.Details[i].key = ''+record.Details[i].Id;
                 }
-                return ret;
+                // console.log('要展示在Table中的内容:',record.Details)
+                return <DeliveryRecordInfo record={record}/>
               },
-              rowExpandable: record => record.name !== 'Not Expandable',
+              defaultExpandAllRows:true,
+              expandRowByClick:true,
+              // rowExpandable: record => record.name !== 'Not Expandable',
             }}
           />
         </div>

@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
-import {Button, Modal, Form, Input, Radio, InputNumber} from 'antd';
-const validateMessages = {
-    required: '必须填写${label}!',
-    types: {
-        // email: '${label} is not a valid email!',
-        number: '${label} 不是有效的数字!',
-    },
-    number: {
-        range: '${label} 必须介于 ${min} 到 ${max} 之间',
-    },
-};
+import {Button,Input} from "antd";
+
+import classNames from './MedicineInfo.module.css'
 
 class MedicineInfo extends Component {
     state={
-        medicine:null
+        medicine:null,
+        barcode : undefined,
+        name: undefined,
+        company:undefined,
     }
     componentDidMount() {
         // console.log('组件已经加载,参数是;', this.props)
@@ -22,142 +17,129 @@ class MedicineInfo extends Component {
             this.setState({medicine:this.props.medicine});
         }
     }
-    formRef = React.createRef();
-    submit() {
-        // let ret = this.formRef.current.submit();
-        // console.log('检查结果:',ret);
-
-        this.formRef.current.validateFields()
-            .then((values) => {
-                this.formRef.current.resetFields();
-                console.log('校验信息完成', values);
-                this.props.onSubmit(values);
-            })
-            .catch((info) => {
-                console.log('校验信息不合规', info);
-            });
+    //获取警告信息文本
+    getWarningLabel(data,name,unit, min,max)
+    {
+        console.log('输入的data为:',data);
+        let longWarning = null;
+        {
+            if (data !== undefined)
+            {
+                if (data)
+                {
+                    let intLong = parseInt(data);
+                    if(isNaN(intLong))
+                    {
+                        longWarning = '无效的'+name+'信息';
+                    }
+                    else if (intLong>300 || intLong <30)
+                    {
+                        longWarning = '有效值为' +min +'~'+max;
+                            // '无效的长度信息,应当介于' + min + unit + '到' + max + unit + '之间';
+                    }
+                }
+                else
+                {
+                    longWarning = '请输入有效的'+name;
+                }
+            }
+            else
+            {
+            }
+        }
+        return longWarning;
     }
     render() {
-        //region 测试按钮
-        let testBtn = null;
-        testBtn =<Button htmlType={'submit'}>测试按钮</Button>
-        // testBtn=<div onClick={()=>{
-        //     // console.log('当前类中的formRef是;', this.formRef)
-        //     // console.log('当前类中的formRef2是:', this.formRef2);
-        //     // this.formRef.current.validateFields()
-        //     // .then((values) => {
-        //     //     this.formRef.current.resetFields();
-        //     //     console.log('要输出的values',values);
-        //     // })
-        //     // .catch((info) => {
-        //     //     console.log('Validate Failed:', info);
-        //     // });
-        // }}>测试</div>
+        //region 条码提示
+        let barcodeWarning = null;
+        if (this.state.barcode !== undefined)
+        {
+            if (!this.state.barcode) {
+                barcodeWarning = '请输入有效的条码';
+            }
+            else if(this.state.barcode.length!==13)
+            {
+                barcodeWarning = '药品条码需为13位数字';
+            }
+        }
         //endregion
-
-        let items = null;
-        if(this.formRef.current) {
-            items = <div>
-                <Form.Item
-                    name="Barcode"
-                    label="条码"
-                    rules={[
-                        {
-                            required: true,
-                            message: '必须填写有效的条码',
-                        },
-                    ]}
-                >
-                    <Input defaultValue={this.state.medicine.Barcode}/>
-                </Form.Item>
-                <Form.Item name="Name" label="药品名称"
-                           rules={[
-                               {
-                                   required: true,
-                                   message: '必须填写有效的药品名称',
-                               },
-                           ]}
-                >
-                    <Input type="textarea" defaultValue={this.state.medicine.Name}/>
-                </Form.Item>
-                <Form.Item name="Company" label="厂商">
-                    <Input type="textarea" defaultValue={this.state.medicine.Company}/>
-                </Form.Item>
-                <div style={{
-                    width: '100%',
-                    // border:'1px solid red',
-                    display: 'flex',
-                    justifyContent: 'space-around'
-                }}><Form.Item
-                    // name={['user', 'age']}
-                    name={'BoxLongMM'}
-                    label="药盒长度毫米"
-                    rules={[
-                        {
-                            required: true,
-                            type: 'number',
-                            min: 20,
-                            max: 260,
-                        },
-                    ]}
-                ><InputNumber
-                    defaultValue={this.state.medicine.BoxLongMM}
-                /></Form.Item>
-                    <Form.Item
-                        // name={['user', 'age']}
-                        name={'BoxWidthMM'}
-                        label="药盒宽度毫米"
-                        rules={[
-                            {
-                                required: true,
-                                type: 'number',
-                                min: 10,
-                                max: 300,
-                            },
-                        ]}
-                    ><InputNumber defaultValue={this.state.medicine.BoxWidthMM}/></Form.Item>
-                    <Form.Item
-                        // name={['user', 'age']}
-                        name={'BoxHeightMM'}
-                        label="药盒高度毫米"
-                        rules={[
-                            {
-                                required: true,
-                                type: 'number',
-                                min: 5,
-                                max: 100,
-                            },
-                        ]}
-                    ><InputNumber defaultValue={this.state.medicine.BoxHeightMM}/></Form.Item></div>
-                <div style={{display: 'flex', justifyContent: 'space-around'}}>
-                    <Button type={'primary'}
-                        // htmlType={'submit'}
-                            onClick={() => {
-                                this.submit()
-                            }}
-                    >确认新增</Button>
-                    <Button type={'ghost'}
-                            onClick={() => this.props.onCancel()}
-                    >取消</Button>
+        //region 名称提示
+        let nameWarning = null;
+        if(this.state.name !== undefined)
+        {
+            if (!this.state.name)
+            {
+                nameWarning = '请输入正确的药品名称';
+            }
+            else if(this.state.name.length<2)
+            {
+                nameWarning = '药品名称太短';
+            }
+        }
+        //endregion
+        //region 长度宽度高度警告信息
+        let longWarning = this.getWarningLabel(this.state.boxLongMM, '药盒长度','毫米', 30,300);
+        let widthWarning = this.getWarningLabel(this.state.boxWidthMM, '药盒宽度','毫米', 30,300);
+        let heightWarning = this.getWarningLabel(this.state.boxHeightMM, '药盒高度','毫米', 30,300);
+        //endregion
+        return <div id={'main'} className={classNames.main}>
+            <div id={'条码行'} className={classNames.infoLine}>
+                <div id={'条码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>条码</div>
+                <Input id={'条码输入框'} placeHolder={'请输入药品条码'} value={this.state.barcode} onChange={(e) => {
+    this.setState({barcode: e.target.value})
+}}/>
+                <div id={'条码提示'} className={classNames.warningText}>{barcodeWarning}</div>
+            </div>
+            <div id={'药品名称行'} className={classNames.infoLine}>
+                <div id={'名称文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>名称</div>
+                <Input id={'名称输入框'} placeHolder={'请输入药品名称'} value={this.state.name} onChange={(e) => {
+    this.setState({name: e.target.value})
+}}/>
+                <div id={'名称提示'} className={classNames.warningText}>{nameWarning}</div>
+            </div>
+            <div id={'厂商行'} className={classNames.infoLine}>
+                <div id={'厂商文字和星号'}>厂商</div>
+                <Input id={'厂商输入框'} placeHolder={'请输入药品厂商'} value={this.state.company} onChange={(e) => {
+    this.setState({company: e.target.value})
+}}/>
+            </div>
+            <div id={'药盒尺寸信息行'} className={classNames.sizeLine}>
+                <div id={'药盒长度区域'}>
+                    <div id={'星号药盒长度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒长度(毫米)</div>
+                    <Input id={'药盒长度输入'} placeHolder={''} value={this.state.boxLongMM} onChange={(e) => {
+    this.setState({boxLongMM: e.target.value})
+}}/>
+                    <div id={'药盒长度提示'} className={classNames.warningText}>{longWarning}</div>
+                </div>
+                <div id={'药盒宽度区域'}>
+                    <div id={'星号药盒宽度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒宽度(毫米)</div>
+                    <Input id={'药盒宽度输入'} placeHolder={''} value={this.state.boxWidthMM} onChange={(e) => {
+    this.setState({boxWidthMM: e.target.value})
+}}/>
+                    <div id={'药盒宽度提示'} className={classNames.warningText}>{widthWarning}</div>
+                </div>
+                <div id={'药盒高度区域'}>
+                    <div id={'星号药盒高度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒高度(毫米)</div>
+                    <Input id={'药盒高度输入'} placeHolder={''} value={this.state.boxHeightMM} onChange={(e) => {
+    this.setState({boxHeightMM: e.target.value})
+}}/>
+                    <div id={'药盒高度提示'} className={classNames.warningText}>{heightWarning}</div>
                 </div>
             </div>
-        }
-        //如果没给定medicine的话就是创建中.
-        return (
-            <Form
-                form={this.formRef2}
-                ref={this.formRef}
-                layout="vertical"
-                name="form_in_modal"
-                initialValues={{
-                    modifier: 'public',
-                }}
-                validateMessages={validateMessages}
-            >
-                {/*{testBtn}*/}
-                {items}
-            </Form>
-        );
+
+            <div id={'按钮行'} className={classNames.buttonLine}>
+                <Button type={'primary'}>确认新增</Button>
+                <Button type={'ghost'}
+                        onClick={()=>
+                        {
+                            if (this.props.onCancel)
+                            {
+                                this.props.onCancel();
+                            }
+                        }}
+                >取消</Button>
+            </div>
+        </div>
     }
 }
 

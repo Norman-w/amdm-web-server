@@ -3,6 +3,11 @@ import {message} from 'antd'
 class App {
     debugMode = true;
     setting= {
+        clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
+        clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
+    };
+    setting1= {
         clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
         serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
