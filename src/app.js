@@ -2,13 +2,13 @@ import {message} from 'antd'
 
 class App {
     debugMode = true;
-    setting1= {
+    setting= {
         SnapshotUrlBase :'http://192.168.2.191',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
         clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
         serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
     };
-    setting= {
+    setting1= {
         SnapshotUrlBase :'http://10.10.10.17',
         clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
@@ -35,7 +35,7 @@ class App {
     };
     request = function ({api, params, success, errProcFunc, failProcFunc, session, dest}) {
         // console.log('执行请求:', api, params, success, errProcFunc,failProcFunc, serviceName,session);
-        if (!this.session) {
+        if (!app.session) {
             let msg = 'invalid session err in request func at app.js' + api;
             if (failProcFunc) {
                 failProcFunc(msg);
@@ -45,26 +45,27 @@ class App {
             }
         }
 
-        let url = this.setting.clientSideApiRouterUrl;
+        let url = app.setting.clientSideApiRouterUrl;
         if (dest === 'server')
         {
-            url = this.setting.serverSideApiRouterUrl;
+            url = app.setting.serverSideApiRouterUrl;
         }
         let s = '';
         if(session)
         {
             s= session;
         }
-        else if (this.session)
+        else if (app.session)
         {
-            s = this.session;
+            s = app.session;
         }
         url += api
             + "&session="
             + s;
         if (params !== undefined) {
-            for (var val in params) {
-                url += "&" + val + "=" + params[val];
+            for (let val in params) {
+                let key = ''+val;
+                url += "&" + val + "=" + params[key];
             }
         }
         fetch(url).then(
@@ -85,7 +86,7 @@ class App {
                             errProcFunc(data)
                         } else {
                             message.warn(JSON.stringify(data));
-                            if (this.debugMode)
+                            if (app.debugMode)
                                 console.log('%c在home.js中未获取到错误处理函数,由控制台输出,request发生错误:' + data.ErrMsg, 'color:red;font-size:12px');
                         }
                     } else {
@@ -131,7 +132,9 @@ class App {
 
         //超时控制器
         let timeoutPromise = (timeout) => {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve
+                                // , reject
+            ) => {
                 setTimeout(() => {
                     isTimeout = true;
                     resolve(new Response("timeout", { status: 504, statusText: "timeout " }));
@@ -176,11 +179,11 @@ class App {
 
     //region 使用post的方式请求服务器,第二个版本 2022年01月05日13:48:08
     //当页面已经关闭了的时候,就是已经发了取消信号.如果取消信号已经发出了,那就直接取消不调用回调函数了.
-    doPost2 = function ({url,apiName,params,cancelSignal, onFinish, onTimeout,timeoutMS,})
+    doPost2 = function ({url,apiName,params,abortController, onFinish, onTimeout,timeoutMS,})
     {
         let isTimeout = false;
         //中断控制器
-        let controller = new AbortController();
+        let controller = abortController?abortController: new AbortController();
         let signal = controller.signal;
         //如果params里面没有给定apiName,自动填写进去
         if (!params['method'])
@@ -200,7 +203,9 @@ class App {
 
         //超时控制器
         let timeoutPromise = (timeout) => {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve
+                                // , reject
+            ) => {
                 setTimeout(() => {
                     isTimeout = true;
                     resolve(new Response("timeout", { status: 504, statusText: "timeout " }));
