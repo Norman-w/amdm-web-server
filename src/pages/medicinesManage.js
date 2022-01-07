@@ -82,6 +82,7 @@ class MedicinesManage extends Component {
     }
   ];
 
+  abortController = new AbortController();
   componentDidMount() {
     this.onSearchMedicine(this.state.pagination);
   }
@@ -95,65 +96,84 @@ class MedicinesManage extends Component {
 
   onSearchMedicine(pagination,filters,sorter)
   {
-    let pageNum = 0;
-    if (pagination && pagination.current>0)
+    if(this.state.loading)
     {
-      pageNum = pagination.current-1;
+      return;
     }
-    let pageSize=defaultPageSize;
-    if (pagination && pagination.pageSize>0)
-    {
-      pageSize=pagination.pageSize;
-    }
-    let that = this;
-    let searchParam = {
-          method:'medicines.get',
+    else {
+      this.setState({loading:true},
+        ()=>
+      {
+        let pageNum = 0;
+        if (pagination && pagination.current>0)
+        {
+          pageNum = pagination.current-1;
+        }
+        let pageSize=defaultPageSize;
+        if (pagination && pagination.pageSize>0)
+        {
+          pageSize=pagination.pageSize;
+        }
+        let that = this;
+        let api = 'medicines.get';
+        let searchParam = {
+          method:api,
           fields:'*',
           barcode:this.state.searchingBarcode,
           tags:this.state.searchingName,
           pageNum:pageNum,
-      // pageNum:1,
-      getTotalRecordCount:true,
+          // pageNum:1,
+          getTotalRecordCount:true,
           pageSize:pageSize
         };
-    console.log('搜索参数:', searchParam)
-    app.doPost(
-        {
-          url:app.setting.clientSideApiRouterUrl,
-          headers:{
-            'Content-Type':'application/json;charset=utf-8;',
-          },
-          params:searchParam,
-          finish:(res)=>
+        // console.log('搜索参数:', searchParam)
+        app.doPost2(
           {
-            if(res.Medicines)
+            url:app.setting.clientSideApiRouterUrl,
+            apiName:api,
+            params:searchParam,
+            onFinish:(res)=>
             {
-              console.log('搜索结果:',res);
-              if (res && res.Medicines && res.Medicines.length>0)
+              if(res.Medicines)
               {
+                console.log('搜索结果:',res);
+                if (res && res.Medicines && res.Medicines.length>0)
+                {
                   for (let i = 0; i < res.Medicines.length; i++) {
-                      res.Medicines[i].key=res.Medicines[i].IdOfHIS;
+                    res.Medicines[i].key=res.Medicines[i].IdOfHIS;
                   }
-              }
+                }
                 console.log('添加了key的药品表:', res);
-              let newState = {
-                data:res.Medicines,
-                pagination:{...pagination}
+                let newState = {
+                  data:res.Medicines,
+                  pagination:{...pagination}
+                }
+                if (pageNum===0)
+                {
+                  newState.pagination.total = res.TotalRecordCount;
+                }
+                newState.loading=false;
+                that.setState(newState);
               }
-              if (pageNum===0)
+              else
               {
-                newState.pagination.total = res.TotalRecordCount;
+                message.error('没有搜索到药品,'+ res.ErrMsg);
+                console.log(res);
+                that.setState({loading:false});
               }
-              that.setState(newState);
-            }
-            else
+
+            },
+            onTimeout:()=>
             {
-              message.error('没有搜索到药品,'+ res.ErrMsg);
-              console.log(res);
-            }
+              message.warn('获取药品信息超时');
+              that.setState({loading:false});
+            },
+            cancelSignal:this.abortController.signal
           }
-        }
+        )
+      }
     )
+    }
   }
   //region 当点击了新增药品的按钮
   // onClickCreateMedicineBtn()
@@ -168,26 +188,25 @@ class MedicinesManage extends Component {
   // {
   //   console.log('要添加药品:',values);
   // }
-  addMedicine2Sql(values)
+  addMedicine2Sql(medicine)
   {
-    let medicine = {
-      Name:values.Name,
-      Barcode:values.Barcode,
-      Company:values.Company,
-      BoxLongMM:values.BoxLongMM,
-      BoxHeightMM:values.BoxHeightMM,
-      BoxWidthMM:values.BoxWidthMM,
-    }
-    app.doPost(
+    // let medicine = {
+    //   Name:values.Name,
+    //   Barcode:values.Barcode,
+    //   Company:values.Company,
+    //   BoxLongMM:values.BoxLongMM,
+    //   BoxHeightMM:values.BoxHeightMM,
+    //   BoxWidthMM:values.BoxWidthMM,
+    // }
+    let that = this;
+    app.doPost2(
         {
           url:app.setting.clientSideApiRouterUrl,
-          headers:
-              {},
           params:{
             MedicineInfoJson:JSON.stringify(medicine),
             method:'medicine.add'
           },
-          finish:(res)=>
+          onFinish:(res)=>
           {
             if (res.Success && res.NewMedicine && res.NewMedicine.Id>0) {
               Modal.success(
@@ -196,7 +215,8 @@ class MedicinesManage extends Component {
                     content: '药品ID为:' + res.NewMedicine.Id,
                     okText: '关闭'
                   }
-              )
+              );
+              that.onSearchMedicine(that.state.pagination);
 
             }
             else
@@ -210,14 +230,72 @@ class MedicinesManage extends Component {
               )
               console.log('添加药品信息到数据库完成', res);
             }
-          }
+          },
+          onTimeout:()=>
+          {
+            message.error('执行药品添加操作超时');
+          },
         }
+    )
+  }
+  updateMedicine2Sql(medicine)
+  {
+    let that = this;
+    app.doPost2(
+      {
+        url:app.setting.clientSideApiRouterUrl,
+        apiName:'medicine.update',
+        params:medicine,
+        onFinish:(res)=>
+        {
+          message.success('药品信息已保存');
+          that.onSearchMedicine(that.state.pagination);
+        },
+        onTimeout:()=>
+        {
+          message.error('更新药品数据超时');
+        },
+        cancelSignal:this.abortController.signal,
+        timeoutMS:4000,
+      }
+    )
+  }
+  deleteMedicineFromSql(id)
+  {
+    let that = this;
+    app.doPost2(
+      {
+        url:app.setting.clientSideApiRouterUrl,
+        apiName:'medicine.delete',
+        params: {
+          Id:id,
+        },
+        onFinish:(res)=>
+        {
+          if (res.IsError)
+          {
+            message.error(res.ErrMsg);
+          }
+          else
+          {
+            message.success('药品已删除');
+          }
+          that.onSearchMedicine(that.state.pagination);
+        },
+        onTimeout:()=>
+        {
+          message.error('删除药品数据超时');
+        },
+        cancelSignal:this.abortController.signal,
+        timeoutMS:4000,
+      }
     )
   }
   medicineInfoDialogRef = React.createRef();
   showMedicine(medicine)
   {
-    const tText = !medicine? '新增药品信息':'编辑药品信息';
+    let createMode = !medicine;
+    const tText = createMode? '新增药品信息':'编辑药品信息';
     let that = this;
     let modal = Modal.info(
         {
@@ -231,16 +309,36 @@ class MedicinesManage extends Component {
           width:800,
           title:tText,
           content:<MedicineInfo ref={this.medicineInfoDialogRef} onSubmit={
-            (values)=>
+            (newMedicine)=>
             {
-              //region 像数据库中添加药品信息
-              that.addMedicine2Sql(values);
-              //endregion
+              if(createMode)
+              {
+                //region 像数据库中添加药品信息
+                delete newMedicine.Id;
+                that.addMedicine2Sql(newMedicine);
+                //endregion
+              }
+              else
+              {
+                //region 保存药品到数据库
+                that.updateMedicine2Sql(newMedicine);
+                //endregion
+              }
+
               modal.destroy();
             }
           }
+                                onDelete={(id)=>{
+                                  if (id)
+                                  {
+                                    this.deleteMedicineFromSql(id);
+                                    modal.destroy();
+                                  }
+                                }}
                                 onCancel={()=>modal.destroy()}
-                                medicine={medicine}/>,
+                                medicine={medicine}
+                                mode={createMode?'create':'edit'}
+          />,
         }
     )
 

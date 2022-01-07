@@ -3,24 +3,45 @@ import {Button,Input} from "antd";
 
 import classNames from './MedicineInfo.module.css'
 
+const emptyMedicine =
+  {
+    Id:0,
+    IdOfHIS:undefined,
+    Barcode : undefined,
+    Name: undefined,
+    Company:undefined,
+    BoxLongMM:0,
+    BoxWidthMM:0,
+    BoxHeightMM:0,
+  }
 class MedicineInfo extends Component {
     state={
-        medicine:null,
-        barcode : undefined,
-        name: undefined,
-        company:undefined,
+      ...emptyMedicine,
+      mode:'create',//edit
     }
     componentDidMount() {
-        // console.log('组件已经加载,参数是;', this.props)
-        if (this.props)
+        console.log('组件已经加载,参数是;', this.props)
+        if (this.props.medicine)
         {
-            this.setState({medicine:this.props.medicine});
+          let newState ={
+            ...this.props.medicine,
+            mode:this.props.mode,
+          }
+            this.setState(newState);
+        }
+        else
+        {
+          let newState = {
+            ...emptyMedicine,
+            mode:this.props.mode
+          }
+          this.setState(newState);
         }
     }
     //获取警告信息文本
     getWarningLabel(data,name,unit, min,max)
     {
-        console.log('输入的data为:',data);
+        // console.log('输入的data为:',data);
         let longWarning = null;
         {
             if (data !== undefined)
@@ -50,85 +71,132 @@ class MedicineInfo extends Component {
         return longWarning;
     }
     render() {
+      let createMode = this.state.mode ==='create';
         //region 条码提示
         let barcodeWarning = null;
-        if (this.state.barcode !== undefined)
+        if (this.state.Barcode !== undefined)
         {
-            if (!this.state.barcode) {
+            if (!this.state.Barcode) {
                 barcodeWarning = '请输入有效的条码';
             }
-            else if(this.state.barcode.length!==13)
+            else
             {
+              let length = this.state.Barcode.length;
+              let isValidLongValue = (/^\d+$/.test(this.state.Barcode));
+              console.log('长度:',length, '是否有效数字', isValidLongValue);
+              if (length!==13 || !isValidLongValue) {
                 barcodeWarning = '药品条码需为13位数字';
+              }
             }
         }
         //endregion
+      let hisCodeWarning = null
+      if (this.state.IdOfHIS !== undefined)
+      {
+        if (!this.state.IdOfHIS) {
+          hisCodeWarning = '请输入HIS系统内该药品的编码';
+        }
+        else
+        {
+        }
+      }
         //region 名称提示
         let nameWarning = null;
-        if(this.state.name !== undefined)
+        if(this.state.Name !== undefined)
         {
-            if (!this.state.name)
+            if (!this.state.Name)
             {
                 nameWarning = '请输入正确的药品名称';
             }
-            else if(this.state.name.length<2)
+            else if(this.state.Name.length<2)
             {
                 nameWarning = '药品名称太短';
             }
         }
         //endregion
         //region 长度宽度高度警告信息
-        let longWarning = this.getWarningLabel(this.state.boxLongMM, '药盒长度','毫米', 30,300);
-        let widthWarning = this.getWarningLabel(this.state.boxWidthMM, '药盒宽度','毫米', 30,300);
-        let heightWarning = this.getWarningLabel(this.state.boxHeightMM, '药盒高度','毫米', 30,300);
+        let longWarning = this.getWarningLabel(this.state.BoxLongMM, '药盒长度','毫米', 30,300);
+        let widthWarning = this.getWarningLabel(this.state.BoxWidthMM, '药盒宽度','毫米', 30,300);
+        let heightWarning = this.getWarningLabel(this.state.BoxHeightMM, '药盒高度','毫米', 30,300);
         //endregion
+
+      //region 是否可以提交修改或者新增
+      let canSubmit = true;
+      if (nameWarning || barcodeWarning || longWarning || widthWarning || heightWarning)
+      {
+        canSubmit = false;
+      }
+      //endregion
         return <div id={'main'} className={classNames.main}>
             <div id={'条码行'} className={classNames.infoLine}>
                 <div id={'条码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>条码</div>
-                <Input id={'条码输入框'} placeHolder={'请输入药品条码'} value={this.state.barcode} onChange={(e) => {
-    this.setState({barcode: e.target.value})
+                <Input id={'条码输入框'} placeHolder={'请输入药品条码'} value={this.state.Barcode} onChange={(e) => {
+    this.setState({Barcode: e.target.value})
 }}/>
                 <div id={'条码提示'} className={classNames.warningText}>{barcodeWarning}</div>
             </div>
+          <div id={'his系统编码行'} className={classNames.infoLine}>
+            <div id={'his编码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>HIS系统内部药品码</div>
+            <Input id={'his编码输入框'} placeHolder={'请输入HIS系统内部的药品编码'} value={this.state.IdOfHIS} onChange={(e) => {
+              this.setState({IdOfHIS: e.target.value})
+            }}/>
+            <div id={'his编码输入框提示'} className={classNames.warningText}>{hisCodeWarning}</div>
+          </div>
             <div id={'药品名称行'} className={classNames.infoLine}>
                 <div id={'名称文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>名称</div>
-                <Input id={'名称输入框'} placeHolder={'请输入药品名称'} value={this.state.name} onChange={(e) => {
-    this.setState({name: e.target.value})
+                <Input id={'名称输入框'} placeHolder={'请输入药品名称'} value={this.state.Name} onChange={(e) => {
+    this.setState({Name: e.target.value})
 }}/>
                 <div id={'名称提示'} className={classNames.warningText}>{nameWarning}</div>
             </div>
             <div id={'厂商行'} className={classNames.infoLine}>
                 <div id={'厂商文字和星号'}>厂商</div>
-                <Input id={'厂商输入框'} placeHolder={'请输入药品厂商'} value={this.state.company} onChange={(e) => {
-    this.setState({company: e.target.value})
+                <Input id={'厂商输入框'} placeHolder={'请输入药品厂商'} value={this.state.Company} onChange={(e) => {
+    this.setState({Company: e.target.value})
 }}/>
             </div>
             <div id={'药盒尺寸信息行'} className={classNames.sizeLine}>
                 <div id={'药盒长度区域'}>
                     <div id={'星号药盒长度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒长度(毫米)</div>
-                    <Input id={'药盒长度输入'} placeHolder={''} value={this.state.boxLongMM} onChange={(e) => {
-    this.setState({boxLongMM: e.target.value})
+                    <Input id={'药盒长度输入'} placeHolder={''} value={this.state.BoxLongMM} onChange={(e) => {
+    this.setState({BoxLongMM: e.target.value})
 }}/>
                     <div id={'药盒长度提示'} className={classNames.warningText}>{longWarning}</div>
                 </div>
                 <div id={'药盒宽度区域'}>
                     <div id={'星号药盒宽度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒宽度(毫米)</div>
-                    <Input id={'药盒宽度输入'} placeHolder={''} value={this.state.boxWidthMM} onChange={(e) => {
-    this.setState({boxWidthMM: e.target.value})
+                    <Input id={'药盒宽度输入'} placeHolder={''} value={this.state.BoxWidthMM} onChange={(e) => {
+    this.setState({BoxWidthMM: e.target.value})
 }}/>
                     <div id={'药盒宽度提示'} className={classNames.warningText}>{widthWarning}</div>
                 </div>
                 <div id={'药盒高度区域'}>
                     <div id={'星号药盒高度毫米'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>药盒高度(毫米)</div>
-                    <Input id={'药盒高度输入'} placeHolder={''} value={this.state.boxHeightMM} onChange={(e) => {
-    this.setState({boxHeightMM: e.target.value})
+                    <Input id={'药盒高度输入'} placeHolder={''} value={this.state.BoxHeightMM} onChange={(e) => {
+    this.setState({BoxHeightMM: e.target.value})
 }}/>
                     <div id={'药盒高度提示'} className={classNames.warningText}>{heightWarning}</div>
                 </div>
             </div>
 
             <div id={'按钮行'} className={classNames.buttonLine}>
-                <Button type={'primary'}>确认新增</Button>
+                <Button type={'primary'} disabled={!canSubmit} onClick={()=>{
+                  if (this.props.onSubmit)
+                  {
+                    this.props.onSubmit(this.state);
+                  }
+                }}>{createMode?'确认新增':'保存修改'}</Button>
+              {!createMode&&<Button type={'danger'}
+                                    onClick={
+                                      ()=>
+                                      {
+                                        if (this.props.onDelete)
+                                        {
+                                          this.props.onDelete(this.state.Id);
+                                        }
+                                      }
+                                    }
+              >删除</Button>}
                 <Button type={'ghost'}
                         onClick={()=>
                         {

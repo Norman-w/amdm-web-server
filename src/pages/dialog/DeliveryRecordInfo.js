@@ -4,7 +4,7 @@ import classNames from "../fulfillRecord.module.css";
 import {Image, Table, Tag, Spin, message} from "antd";
 import app from "../../app";
 
-const urlBase ='http://192.168.2.191';
+
 //付药单中的药品相关信息的明细列
 const detailColumns =
     [
@@ -89,15 +89,15 @@ class DeliveryRecordInfo extends React.Component{
                 let current = res.Snapshots[i];
                 if (current.Location==='取药斗上方')
                 {
-                  bucket = urlBase+current.FileUrl;
+                  bucket = app.setting.SnapshotUrlBase+current.FileUrl;
                 }
                 else if(current.Location === '用户交互区')
                 {
-                  interactive = urlBase+current.FileUrl;
+                  interactive = app.setting.SnapshotUrlBase+current.FileUrl;
                 }
                 else if(current.Location === '付药单' )
                 {
-                  bill = urlBase+current.FileUrl;
+                  bill = app.setting.SnapshotUrlBase+current.FileUrl;
                 }
               }
               console.log('将要设置三张图:', bill, bucket, interactive);

@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import InventoryChart1 from "./component/InventoryChart1";
 import app from "../app";
 import classNames from './inventoryStatus.module.css';
-import {Button} from "antd";
+import {Button, message,Spin} from "antd";
 
 class InventoryStatus extends Component {
   state=
       {
+        loading:false,
         Inventory:[]
       }
   componentDidMount() {
@@ -15,36 +16,59 @@ class InventoryStatus extends Component {
 
   //region 获取药品并且更新到视图显示
 getAndShowCurrentInventory() {
-    //region 获取数据并显示
-    let url = 'http://192.168.2.191/ClientSide/ApiRouter/';
-    let api = 'inventory.all.get';
-    let that = this;
-    app.doPost(
+    if (this.state.loading)
+    {
+      return;
+    }
+    else
+    {
+      let that = this;
+      this.setState({loading:true},
+        ()=>
         {
-            url: url,
-            headers:
+          //region 获取数据并显示
+          let api = 'inventory.all.get';
+          app.doPost2(
+            {
+              url: app.setting.clientSideApiRouterUrl,
+              apiName:api,
+              params:
                 {
-                    'Content-Type': 'application/json;charset=utf-8;',
-                    // 'apiName':api
+                  method: api,
+                  fields: 'name'
                 },
-            params:
+              onFinish: (res) => {
+                console.log('获取库存结果完成:', res)
+                if (res.Inventory)
                 {
-                    method: api,
-                    fields: 'name'
-                },
-            finish: (res) => {
-                // that.setState({PeripheralsStatus:res.PeripheralsStatus})
-                console.log('获取到库存信息')
-                console.log(res);
-                that.setState({Inventory: res.Inventory});
+                  that.setState({Inventory: res.Inventory, loading:false});
+                }
+                else
+                {
+                  message.warn(res.ErrMsg);
+                  that.setState({loading:false});
+                }
+              },
+              onTimeout:()=>
+              {
+                message.warn('获取库存信息超时');
+                that.setState({loading:false});
+              }
             }
-        }
-    )
-    //endregion
+          )
+          //endregion
+        })
+    }
+
 }
     //endregion
 
   render() {
+    let chartElem = <div className={classNames.loading}><Spin/></div>
+    if (!this.state.loading)
+    {
+      chartElem = <InventoryChart1 Inventory={this.state.Inventory}/>
+    }
     return (
       <div className={classNames.main}>
           <div className={classNames.titleLine}>当前库存
@@ -53,7 +77,7 @@ getAndShowCurrentInventory() {
               >刷新</Button>
           </div>
           <div className={classNames.chartLine}>
-              <InventoryChart1 Inventory={this.state.Inventory}/>
+            {chartElem}
           </div>
           {/*<div className={classNames.listArea}></div>*/}
       </div>
