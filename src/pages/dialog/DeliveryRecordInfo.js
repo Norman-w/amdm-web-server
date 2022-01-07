@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import classNames from "../fulfillRecord.module.css";
 import {Image, Table, Tag, Spin, message} from "antd";
 import app from "../../app";
@@ -110,7 +110,7 @@ class DeliveryRecordInfo extends React.Component{
           {
             message.warn('获取凭据图片超时');
           },
-          cancelSignal :this.signal,
+            abortController :this.signal,
           timeoutMS:5000,
         }
     )
@@ -139,7 +139,9 @@ class DeliveryRecordInfo extends React.Component{
             pagination={{hideOnSinglePage: true}}
             columns={detailColumns}
             dataSource={record.Details}
-            footer={(currentPageData) => {
+            footer={(
+                // currentPageData
+            ) => {
               return <div>
                 {/*总记录数:{currentPageData.length}*/}
                 <div id={'凭证信息行'} className={classNames.imagesLine}>
@@ -169,5 +171,5 @@ class DeliveryRecordInfo extends React.Component{
         </Table>
     );
   }
-};
+}
 export default DeliveryRecordInfo;

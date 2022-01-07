@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {DatePicker ,Tag, Input, Button, message, Radio, Table, Modal} from 'antd';
+import {DatePicker, message, Table, Tag} from 'antd';
 // import classNames from './instockRecord.module.css'
 import app from "../app";
 import classNames from './fulfillRecord.module.css'
 import DeliveryRecordInfo from "./dialog/DeliveryRecordInfo";
 
-const {Search} = Input;
+// const {Search} = Input;
 const defaultPageSize = 10;
 const { RangePicker } = DatePicker;
 
@@ -80,11 +80,11 @@ class FulfillRecord extends Component {
     this.abortController.abort();
   }
 
-  onSearchDeliveryRecord(pagination,filters,sorter) {
+  onSearchDeliveryRecord(pagination
+                         // ,filters,sorter
+  ) {
     if (this.state.loading) {
-      return;
     } else {
-      let that = this;
       this.setState({loading: true},
         () => {
           //region 设置完了正在获取中 才开始正式执行
@@ -116,7 +116,7 @@ class FulfillRecord extends Component {
               url: app.setting.clientSideApiRouterUrl,
               apiName: api,
               params: searchParam,
-              cancelSignal: this.abortController.signal,
+                abortController: this.abortController,
               onFinish: (res) => {
                 let newState = {loading:false};
                 if (res.DeliveryRecords) {
@@ -139,7 +139,7 @@ class FulfillRecord extends Component {
                 that.setState(newState);
               },
               timeoutMS:10000,
-              onTimeout:(res)=>
+              onTimeout:()=>
               {
                 message.warn('获取取药记录超时');
                 that.setState({loading:false})
@@ -216,10 +216,9 @@ class FulfillRecord extends Component {
               {
                 for (let i = 0; i < record.Details.length; i++) {
                   let detail = record.Details[i];
-                  let locationString = '第'+ (detail.StockIndex?detail.StockIndex+1:1) + '仓 第'
-                      + (detail.FloorIndex?detail.FloorIndex+1:1) + '层 第'
-                      + (detail.GridIndex?detail.GridIndex+1:1) + '槽';
-                  record.Details[i].gridPosition= locationString;
+                    record.Details[i].gridPosition= '第' + (detail.StockIndex ? detail.StockIndex + 1 : 1) + '仓 第'
+                      + (detail.FloorIndex ? detail.FloorIndex + 1 : 1) + '层 第'
+                      + (detail.GridIndex ? detail.GridIndex + 1 : 1) + '槽';
                   record.Details[i].key = ''+record.Details[i].Id;
                 }
                 // console.log('要展示在Table中的内容:',record.Details)

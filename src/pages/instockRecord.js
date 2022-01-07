@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {DatePicker ,Tag, Input, Button, message, Radio, Table, Modal} from 'antd';
+import {DatePicker ,Tag, Button, message,  Table} from 'antd';
 import classNames from './instockRecord.module.css'
 import app from "../app";
-import MedicineInfo from "./dialog/MedicineInfo";
 
 // import moment from 'moment';
 // import 'moment/locale/zh-cn';
@@ -11,7 +10,6 @@ import MedicineInfo from "./dialog/MedicineInfo";
 // import zhCN from 'antd/es/locale/zh_CN';
 // import { ConfigProvider } from 'antd';
 
-const {Search} = Input;
 const defaultPageSize = 10;
 const { RangePicker } = DatePicker;
 
@@ -88,11 +86,11 @@ class InstockRecord extends Component {
     this.abortController.abort();
   }
 
-  onSearchInstockRecords(pagination,filters,sorter) {
+  onSearchInstockRecords(pagination
+                         // ,filters,sorter
+  ) {
     if (this.state.loading) {
-      return;
     } else {
-      let that = this;
       this.setState({loading: true},
           () => {
             //region 设置完了正在获取中 才开始正式执行
@@ -123,7 +121,7 @@ class InstockRecord extends Component {
                   url: app.setting.clientSideApiRouterUrl,
                   apiName: api,
                   params: searchParam,
-                  cancelSignal: this.abortController.signal,
+                    abortController: this.abortController,
                   onFinish: (res) => {
                     let newState = {loading:false};
                     if (res.InstockRecords) {
@@ -146,7 +144,7 @@ class InstockRecord extends Component {
                     that.setState(newState);
                   },
                   timeoutMS:3000,
-                  onTimeout:(res)=>
+                  onTimeout:()=>
                   {
                     message.warn('获取上药记录超时');
                     that.setState({loading:false})

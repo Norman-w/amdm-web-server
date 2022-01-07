@@ -1,7 +1,7 @@
 // 当进入页面和搜索的时候  应该和实际请求搜索的函数分开.具体2021年12月27日17:59:38 明天再测试
 
 import React, {Component} from 'react';
-import {Input, Button, message, Radio, Table, Modal} from 'antd';
+import {Input, Button, message, Table, Modal} from 'antd';
 import classNames from './medicinesManage.module.css';
 import app from "../app";
 import MedicineInfo from "./dialog/MedicineInfo";
@@ -94,11 +94,12 @@ class MedicinesManage extends Component {
     this.showMedicine(medicine);
   }
 
-  onSearchMedicine(pagination,filters,sorter)
+  onSearchMedicine(pagination
+                   // ,filters,sorter
+  )
   {
     if(this.state.loading)
     {
-      return;
     }
     else {
       this.setState({loading:true},
@@ -168,7 +169,7 @@ class MedicinesManage extends Component {
               message.warn('获取药品信息超时');
               that.setState({loading:false});
             },
-            cancelSignal:this.abortController.signal
+              abortController:this.abortController
           }
         )
       }
@@ -246,7 +247,7 @@ class MedicinesManage extends Component {
         url:app.setting.clientSideApiRouterUrl,
         apiName:'medicine.update',
         params:medicine,
-        onFinish:(res)=>
+        onFinish:()=>
         {
           message.success('药品信息已保存');
           that.onSearchMedicine(that.state.pagination);
@@ -255,7 +256,7 @@ class MedicinesManage extends Component {
         {
           message.error('更新药品数据超时');
         },
-        cancelSignal:this.abortController.signal,
+          abortController:this.abortController,
         timeoutMS:4000,
       }
     )
@@ -286,7 +287,7 @@ class MedicinesManage extends Component {
         {
           message.error('删除药品数据超时');
         },
-        cancelSignal:this.abortController.signal,
+          abortController:this.abortController,
         timeoutMS:4000,
       }
     )
