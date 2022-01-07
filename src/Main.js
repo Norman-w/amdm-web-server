@@ -1,4 +1,4 @@
-import {Avatar, Button, Layout, Menu, message} from 'antd';
+import {Avatar, Button, Layout, Menu} from 'antd';
 import {
   HomeOutlined,
 BarcodeOutlined,
@@ -11,7 +11,6 @@ import React, {Component} from 'react';
 import 'antd/dist/antd.css';
 import './Main.css';
 import logo from './images/logo.jpeg';
-import classNames from "./Main.module.css";
 import Status from "./pages/status";
 import InventoryStatus from "./pages/inventoryStatus";
 import InstockRecord from "./pages/instockRecord";
@@ -23,8 +22,6 @@ import LogView from "./pages/logView";
 import MedicinesManage from "./pages/medicinesManage";
 import LoginForm from "./pages/login/LoginForm";
 import app from "./app";
-import md5 from 'js-md5';
-import Banner from "./pages/component/Banner";
 // import DefaultClient from './AMDM_SDK/DefaultClient';
 // import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
 
@@ -52,7 +49,7 @@ class Main extends Component {
       console.log('开始执行测试请求post');
       //region 执行一个获取付药机8080接口传输的数据
       let api = 'peripheralsstatus.get';
-      let that = this;
+      // let that = this;
       app.doPost(
           {
               url:'http://192.168.2.207:8080',
@@ -65,7 +62,9 @@ class Main extends Component {
                   {
                       fields:'*'
                   },
-              finish:(res)=>
+              finish:(
+                  // res
+              )=>
               {
                   // that.setState({PeripheralsStatus:res.PeripheralsStatus})
               }
@@ -90,68 +89,13 @@ class Main extends Component {
       // }}
       // >测试按钮</Button>
       // </center>
-
       //endregion
       //region 如果是还没有登陆的状态 先登陆
       if (!this.state.account)
       {
           let that = this;
-          return <LoginForm onLogin={(user,pass)=>{
-              // app.request({
-              //     api:'accounts.get',
-              //     params:
-              //         {
-              //             username:user,
-              //             passwordMD5: md5(pass),
-              //         },
-              //     success:(res)=>
-              //     {
-              //         if (res.Accounts && res.Accounts.length===1 && res.Accounts[0].Id>0) {
-              //             message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!')
-              //             console.log(res);
-              //             that.setLogonAccount(res.Accounts[0]);
-              //         }
-              //         else
-              //         {
-              //             message.warn('登陆信息校验完成,账号校验失败');
-              //         }
-              //     },
-              //     errProcFunc:(res)=>
-              //     {
-              //         message.error('在登陆校验时发生错误');
-              //         message.error(res.ErrMsg);
-              //     },
-              //     dest:'server'
-              // })
-              console.log('即将执行登陆请求')
-              app.doPost(
-                  {
-                      url: app.setting.serverSideApiRouterUrl,
-                      headers:
-                          {
-                              'Content-Type': 'application/json;charset=utf-8;',
-                          },
-                      params:
-                          {
-                              method:'accounts.get',
-                              username:user,
-                              passwordMD5:md5(pass),
-                          },
-                      finish:(res)=>
-                      {
-                          // console.log('执行post完成')
-                          if (res.Accounts && res.Accounts.length===1 && res.Accounts[0].Id>0) {
-                              message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!')
-                              // console.log(res);
-                              that.setLogonAccount(res.Accounts[0]);
-                          }
-                          else
-                          {
-                              message.warn('登陆信息校验完成,账号校验失败');
-                          }
-                      }
-                  }
-              )
+          return <LoginForm onLoginSuccess={(account)=>{
+              that.setLogonAccount(account);
           }}/>;
       }
       //endregion

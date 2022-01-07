@@ -201,14 +201,18 @@ class App {
             signal:signal
         });
 
+        let timeOutController = null;
         //超时控制器
         let timeoutPromise = (timeout) => {
             return new Promise((resolve
-                                // , reject
+                                , reject
             ) => {
-                setTimeout(() => {
+                timeOutController = setTimeout(() => {
                     isTimeout = true;
-                    resolve(new Response("timeout", { status: 504, statusText: "timeout " }));
+                    // resolve(new Response("timeout", { status: 504, statusText: "timeout " }));
+                    let msg = '执行dopost2超时';
+                    console.log('c%', 'color:red,font-size:20px', msg);
+                    reject('执行dopost2超时');
                     controller.abort();
                 }, timeout);
             });
@@ -244,10 +248,16 @@ class App {
                         )
                     }
 
+                    //region 有了response以后就是网络请求成功了,清空计时器
+                    clearTimeout(timeOutController);
+                    //endregion
                 }
             )
             .catch(error => {
-                console.log('执行fetch超时',error);
+                console.log('%c执行fetch超时,详细内容是:','color:red', error);
+                //region 发生了错误以后,也清空计时器
+                clearTimeout(timeOutController);
+                //endregion
             });
     }
     //endregion
