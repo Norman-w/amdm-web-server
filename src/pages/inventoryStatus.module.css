@@ -2,7 +2,7 @@
 {
     width: 100%;
     min-height: 100%;
-    height: 100%;
+    /*height: 100%;*/
     /*border: 1px solid #aca209;*/
     display: flex;
     flex-direction: column;
@@ -45,6 +45,6 @@
 .listArea
 {
     width: 100%;
-    height: 10000px;
-    border: 2px solid red;
+    /*height: 10000px;*/
+    /*border: 2px solid red;*/
 }

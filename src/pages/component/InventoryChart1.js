@@ -1,36 +1,52 @@
 import React from 'react';
 import {Treemap} from "@ant-design/charts";
-import classNames from './InventoryChart1.module.css';
+// import classNames from './InventoryChart1.module.css';
 
 function InventoryChart1(props) {
+    // const inventory2Chart = function (inventory){
+    //     if (!inventory)
+    //     {
+    //         return [];
+    //     }
+    //     let ret= [];
+    //     let dic = {};
+    //     for (let i = 0; i < inventory.length; i++) {
+    //         let current = inventory[i];
+    //         //region 如果是没有库存的就不展示的话
+    //         if (!current.Count)
+    //         {continue;}
+    //         //endregion
+    //         if(!dic[current.Name])
+    //         {
+    //             dic[current.Name]={
+    //                 name:current.Name,
+    //                 value:current.Count? current.Count:0,
+    //             };
+    //         }
+    //         else
+    //         {
+    //             dic[current.Name].value += current.Count;
+    //         }
+    //     }
+    //     let keys = Object.keys(dic);
+    //     for (let i = 0; i < keys.length; i++) {
+    //         ret.push(dic[keys[i]]);
+    //     }
+    //     return ret;
+    // }
     const inventory2Chart = function (inventory){
         if (!inventory)
         {
             return [];
         }
-        let ret= [];
-        let dic = {};
+        let ret = [];
         for (let i = 0; i < inventory.length; i++) {
-            let current = inventory[i];
-            //region 如果是没有库存的就不展示的话
-            if (!current.Count)
-            {continue;}
-            //endregion
-            if(!dic[current.Name])
-            {
-                dic[current.Name]={
-                    name:current.Name,
-                    value:current.Count? current.Count:0,
-                };
-            }
-            else
-            {
-                dic[current.Name].value += current.Count;
-            }
-        }
-        let keys = Object.keys(dic);
-        for (let i = 0; i < keys.length; i++) {
-            ret.push(dic[keys[i]]);
+            ret.push(
+                {
+                    name:inventory[i].Name,
+                    value:inventory[i].Count,
+                }
+            )
         }
         return ret;
     }

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {DatePicker ,Tag, Button, message,  Table} from 'antd';
+import {DatePicker, Tag, Button, message, Table, Modal} from 'antd';
 import classNames from './instockRecord.module.css'
 import app from "../app";
+import InstockRecordInfo from "./dialog/InstockRecordInfo";
 
 // import moment from 'moment';
 // import 'moment/locale/zh-cn';
@@ -72,7 +73,14 @@ class InstockRecord extends Component {
       width: 100,
       render:(a,b)=>{
         // console.log('渲染收操作是:', a,b);
-        return <Button type={'ghost'} onClick={()=>this.onEditMedicine(b)}>编辑</Button>
+        return <Button type={'ghost'} onClick={()=>Modal.info(
+            {
+                title:'上药明细:',
+                icon:null,
+                width:1000,
+                content:<InstockRecordInfo record={b}/>
+            }
+        )}>查看明细</Button>
       }
     }
   ];

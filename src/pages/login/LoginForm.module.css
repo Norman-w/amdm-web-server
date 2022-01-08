@@ -80,3 +80,10 @@
   user-select: none;
   cursor: pointer;
 }
+.loadingArea
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

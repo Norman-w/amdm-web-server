@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import classNames from './status.module.css'
-import Page from "./test/AntdChart";
+// import Page from "./test/AntdChart";
 import '../iconfont.css';
 import {WarehouseAc} from "./component/WarehouseAC";
 import app from "../app";

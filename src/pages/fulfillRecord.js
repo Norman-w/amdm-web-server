@@ -4,6 +4,7 @@ import {DatePicker, message, Table, Tag} from 'antd';
 import app from "../app";
 import classNames from './fulfillRecord.module.css'
 import DeliveryRecordInfo from "./dialog/DeliveryRecordInfo";
+// import {disableButtons} from "sweetalert2";
 
 // const {Search} = Input;
 const defaultPageSize = 10;
@@ -55,9 +56,20 @@ class FulfillRecord extends Component {
       dataIndex: 'StartTime',
     },
     {
-      title:'完成时间',
+      title:'停止时间',
       key:'EndTime',
       dataIndex: 'EndTime',
+    },
+    {
+      title:'状态',
+      key:'Status',
+      render:(a)=>{
+        // console.log(a)
+        return <div>
+          <Tag color={a.Finished?'green':'gray'}>{a.Finished?'已完成':'未完成'}</Tag>
+          {a.Canceled && <Tag color={'volcano'}
+          >已取消</Tag>}</div>
+      }
     },
     // {
     //   title: '操作',

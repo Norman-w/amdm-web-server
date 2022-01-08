@@ -14,9 +14,18 @@ class App {
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
         serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
     };
+    setting2= {
+        SnapshotUrlBase :'http://10.211.55.3',
+        clientSideAMDMControlPanelRouterUrl:'http://10.211.55.3:8080/',
+        clientSideApiRouterUrl:'http://10.211.55.3/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://10.211.55.3/serverside/apirouter/',
+    };
+    //付药机的设置
+    amdmSetting={};
     account;
     session;
     constructor() {
+        console.log(window.location.hostname);
         // let hostname = window.location.hostname;
         //
         // if(hostname)
@@ -179,7 +188,7 @@ class App {
 
     //region 使用post的方式请求服务器,第二个版本 2022年01月05日13:48:08
     //当页面已经关闭了的时候,就是已经发了取消信号.如果取消信号已经发出了,那就直接取消不调用回调函数了.
-    doPost2 = function ({url,apiName,params,abortController, onFinish, onTimeout,timeoutMS,})
+    doPost2 = function ({url,apiName,params,abortController, onFinish, onTimeout,timeoutMS,session})
     {
         let isTimeout = false;
         //中断控制器
@@ -190,6 +199,7 @@ class App {
         {
             params['method'] = apiName;
         }
+        params.session = session?session:app.session;
 
         let request = new Request(url, {
             method:'post',
@@ -198,7 +208,8 @@ class App {
                 apiName:apiName,
             },
             body:JSON.stringify(params),
-            signal:signal
+            signal:signal,
+            // credentials:"include"
         });
 
         let timeOutController = null;
@@ -254,10 +265,14 @@ class App {
                 }
             )
             .catch(error => {
-                console.log('%c执行fetch超时,详细内容是:','color:red', error);
+                console.log('%c 在App.DoPost2中执行fetch超时,详细内容是:','color:red', error, 'url:',url, 'api:', apiName);
                 //region 发生了错误以后,也清空计时器
                 clearTimeout(timeOutController);
                 //endregion
+                if (isTimeout && onTimeout)
+                {
+                    onTimeout()
+                }
             });
     }
     //endregion

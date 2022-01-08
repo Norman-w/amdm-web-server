@@ -2,23 +2,86 @@ import React, {Component} from 'react';
 import InventoryChart1 from "./component/InventoryChart1";
 import app from "../app";
 import classNames from './inventoryStatus.module.css';
-import {Button, message,Spin} from "antd";
+import {Table, Button, message, Spin, Tag} from "antd";
+
+const inventoryTableColumns=
+    [
+        {
+            title: '编号',
+            dataIndex: 'Id',
+            key: 'key',
+            render:t=><div style={{color:'gray'}}>{t}</div>
+        },
+        {
+            title: '名称',
+            dataIndex: 'Name',
+        },
+        {
+            title: '库存',
+            dataIndex: 'Count',
+            render:(t)=>{return !t?<Tag color={'lightgray'}>无</Tag> :<Tag color={'green'}>{t}</Tag>}
+        },
+
+        {
+            title: 'HIS编码',
+            dataIndex: 'IdOfHIS',
+        },
+        {
+            title: '条码',
+            dataIndex: 'Barcode',
+        },
+
+        {
+            title: '厂商',
+            dataIndex: 'Company',
+        },
+    ]
 
 class InventoryStatus extends Component {
   state=
       {
         loading:false,
-        Inventory:[]
+        // Inventory:[],
+          //合并完了的库存信息
+          MergedInventory:[]
       }
   componentDidMount() {
       this.getAndShowCurrentInventory();
   }
 
+    mergeInventory = function (inventory){
+        if (!inventory)
+        {
+            return [];
+        }
+        let ret= [];
+        let dic = {};
+        for (let i = 0; i < inventory.length; i++) {
+            let current = inventory[i];
+            if(!dic[current.Id])
+            {
+                if (!current.Count)
+                {
+                    current.Count = 0;
+                }
+                dic[current.Id]=current;
+            }
+            else
+            {
+                dic[current.Id].Count += current.Count?current.Count:0;
+            }
+        }
+        let keys = Object.keys(dic);
+        for (let i = 0; i < keys.length; i++) {
+            ret.push(dic[keys[i]]);
+        }
+        return ret;
+    }
+
   //region 获取药品并且更新到视图显示
 getAndShowCurrentInventory() {
     if (this.state.loading)
     {
-      return;
     }
     else
     {
@@ -35,13 +98,17 @@ getAndShowCurrentInventory() {
               params:
                 {
                   method: api,
-                  fields: 'name'
+                  // fields: 'name'
                 },
               onFinish: (res) => {
                 console.log('获取库存结果完成:', res)
                 if (res.Inventory)
                 {
-                  that.setState({Inventory: res.Inventory, loading:false});
+                  that.setState({
+                      // Inventory: res.Inventory,
+                      loading:false,
+                      MergedInventory:that.mergeInventory(res.Inventory)
+                  });
                 }
                 else
                 {
@@ -67,18 +134,19 @@ getAndShowCurrentInventory() {
     let chartElem = <div className={classNames.loading}><Spin/></div>
     if (!this.state.loading)
     {
-      chartElem = <InventoryChart1 Inventory={this.state.Inventory}/>
+      chartElem = <InventoryChart1 Inventory={this.state.MergedInventory}/>
     }
     return (
       <div className={classNames.main}>
           <div className={classNames.titleLine}>当前库存
-              <Button size={'large'} type={'primary'}
+              <Button size={'small'} type={'primary'}
                       onClick={()=>{this.getAndShowCurrentInventory()}}
               >刷新</Button>
           </div>
           <div className={classNames.chartLine}>
             {chartElem}
           </div>
+          <Table className={classNames.listArea} columns={inventoryTableColumns} dataSource={this.state.MergedInventory}/>
           {/*<div className={classNames.listArea}></div>*/}
       </div>
     );

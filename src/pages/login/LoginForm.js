@@ -21,7 +21,7 @@ class LoginForm extends React.Component{
     //点击登陆的时候.
     let user = values.username;
     let pass = values.password;
-    let api = 'accounts.get';
+    let api = 'login';
     if (this.state.loading)
     {
     }
@@ -41,26 +41,25 @@ class LoginForm extends React.Component{
                             },
                         onFinish: (res) => {
                             console.log('执行post完成',res)
-                            if (res.Accounts && res.Accounts.length === 1 && res.Accounts[0].Id > 0) {
-                                message.success('欢迎登陆,' + res.Accounts[0].Name + ' 您辛苦了!');
+                            if (res.Account && res.Account.Id > 0) {
+                                message.success('欢迎登陆,' + res.Account.Name + ' 您辛苦了!');
                                 if (that.props.onLoginSuccess)
                                 {
-                                    that.props.onLoginSuccess(res.Accounts[0]);
+                                    that.props.onLoginSuccess(res.Account,res.Session);
                                 }
                             } else {
                                 message.warn('登陆信息校验完成,账号校验失败');
                             }
                             if (!that.abortController.signal.aborted)
                             {
+                                that.abortController = new AbortController();
                                 that.setState({loading:false});
                             }
                         },
                         onTimeout: () => {
                             message.warn('登陆超时,请检查网络后重试');
-                            if (!that.abortController.signal.aborted)
-                            {
-                                that.setState({loading:false});
-                            }
+                            that.abortController = new AbortController();
+                            that.setState({loading:false});
                         },
                         abortController:that.abortController,
                     }
@@ -81,10 +80,6 @@ class LoginForm extends React.Component{
   }
   render() {
       let onCloseSettingPanel = this.onCloseSettingPanel.bind(this);
-      if(this.state.loading)
-      {
-          return <div><Spin/></div>
-      }
       return (
           <div className={styles.login_form_main}>
               <Drawer title="设置" placement="left" onClose={onCloseSettingPanel} visible={this.state.settingPanelVisible}
@@ -107,7 +102,7 @@ class LoginForm extends React.Component{
                        onClick={()=>this.setState({settingPanelVisible:true})}
                   >⚙</div>
               </div>
-              <Form
+              {this.state.loading?<div className={styles.loadingArea}><Spin/>正在登陆,请稍后...</div>:<Form
                   name="normal_login"
                   className={styles.login_form}
                   initialValues={{
@@ -150,7 +145,7 @@ class LoginForm extends React.Component{
                           登  陆
                       </Button>
                   </Form.Item>
-              </Form>
+              </Form>}
           </div>
       );
   }

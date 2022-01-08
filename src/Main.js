@@ -1,4 +1,4 @@
-import {Avatar, Button, Layout, Menu} from 'antd';
+import {Avatar, Button, Layout, Menu, Modal, Tooltip} from 'antd';
 import {
   HomeOutlined,
 BarcodeOutlined,
@@ -38,10 +38,11 @@ class Main extends Component {
     console.log(collapsed);
     this.setState({ collapsed });
   };
-  setLogonAccount(account)
+  setLogonAccount(account,session)
   {
       this.setState({account:account});
       app.account = account;
+      app.session = session;
       console.log('已设置登陆账号为:', account);
   }
   testFunc()
@@ -94,8 +95,10 @@ class Main extends Component {
       if (!this.state.account)
       {
           let that = this;
-          return <LoginForm onLoginSuccess={(account)=>{
-              that.setLogonAccount(account);
+          return <LoginForm onLoginSuccess={(account,session)=>{
+              that.setState({selectedKeys:['1'],currentPage:<Status/>, openKeys:[]},()=>{
+                  that.setLogonAccount(account,session);
+              })
           }}/>;
       }
       //endregion
@@ -122,6 +125,17 @@ class Main extends Component {
           {/*<div className="logo" />*/}
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline"
                 // defaultOpenKeys={["sub2","sub1"]}
+              onOpenChange={(openKeys)=>{
+                  this.setState({openKeys:openKeys});
+              }}
+                openKeys={this.state.openKeys}
+                selectedKeys={this.state.selectedKeys}
+                onSelect={(k)=>{
+                    if (k.selectedKeys&&k.selectedKeys.length === 1)
+                    {
+                        this.setState({selectedKeys:k.selectedKeys});
+                    }
+                }}
           >
                          <Menu.Item key="1" icon={<HomeOutlined />}
                                     onClick={()=>{this.setState({currentPage:<Status/>})}}
@@ -148,7 +162,7 @@ class Main extends Component {
                          <SubMenu key="sub1" icon={<UserOutlined />} title="账户管理">
                            <Menu.Item key="3"
                                       onClick={()=>{this.setState({currentPage:<MyAccount/>})}}
-                           >我的信息</Menu.Item>
+                           >我的账户</Menu.Item>
                            <Menu.Item key="4"
                                       onClick={()=>{this.setState({currentPage:<AccountsManage/>})}}
                            >管理其他账户</Menu.Item>
@@ -170,12 +184,31 @@ class Main extends Component {
                   // className="site-layout-sub-header-background"
                   style={{ padding: 0 ,textAlign:'right',paddingRight:10}}
           >
-              <Button onClick={() => {
-    this.testFunc();
-}}>测试按钮</Button>
-              <Avatar style={{userSelect:'none'}}
-              >{this.state.account.Name?this.state.account.Name[0]:'User'}</Avatar>
-
+              <Tooltip title={'点击查看或编辑用户信息'}>
+              <Avatar style={{userSelect:'none',cursor:'pointer'}}
+                      onClick={()=>{this.setState({currentPage:<MyAccount/>, selectedKeys:['3'],openKeys:['sub1']})}}
+              >{this.state.account.Name?this.state.account.Name[this.state.account.Name.length-1]:'-'}</Avatar>
+              </Tooltip>
+{/*              <Button onClick={() => {*/}
+{/*    this.testFunc();*/}
+{/*}}>测试按钮</Button>*/}
+            <Button style={{marginLeft:'20px'}} type={'ghost'} size={'small'}
+                    onClick={
+                        ()=>
+                        {
+                            Modal.confirm(
+                                {
+                                    title:'确认退出登录吗?',
+                                    centered:true,
+                                    onOk:()=>
+                                    {
+                                        this.setLogonAccount(null,null);
+                                    }
+                                }
+                            )
+                        }
+                    }
+            >退出登录</Button>
           </Header>
           {/*<Banner/>*/}
           <Content style={{ margin: '24px 16px 0' }}>
