@@ -4,6 +4,7 @@ import {DatePicker, message, Table, Tag} from 'antd';
 import app from "../app";
 import classNames from './fulfillRecord.module.css'
 import DeliveryRecordInfo from "./dialog/DeliveryRecordInfo";
+import {Utils} from "./utils";
 // import {disableButtons} from "sweetalert2";
 
 // const {Search} = Input;
@@ -228,9 +229,7 @@ class FulfillRecord extends Component {
               {
                 for (let i = 0; i < record.Details.length; i++) {
                   let detail = record.Details[i];
-                    record.Details[i].gridPosition= '第' + (detail.StockIndex ? detail.StockIndex + 1 : 1) + '仓 第'
-                      + (detail.FloorIndex ? detail.FloorIndex + 1 : 1) + '层 第'
-                      + (detail.GridIndex ? detail.GridIndex + 1 : 1) + '槽';
+                    record.Details[i].gridPosition= Utils.GetGridLocationString(detail.StockIndex,detail.FloorIndex,detail.GridIndex)
                   record.Details[i].key = ''+record.Details[i].Id;
                 }
                 // console.log('要展示在Table中的内容:',record.Details)

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Tag, Table, Spin} from "antd";
+import {Utils} from "../utils";
 
 class InstockRecordInfo extends Component {
     componentDidMount() {
@@ -28,7 +29,7 @@ class InstockRecordInfo extends Component {
         {
             title:'位置',
             render:(a,b)=>{
-                let str = '第'+(b.StockIndex?b.StockIndex +1 :1) +'仓 第'+ (b.FloorIndex?b.FloorIndex+1:1)+'层 第' + (b.GridIndex? b.GridIndex +1:1) +'槽';
+                let str = Utils.GetGridLocationString(b.StockIndex,b.FloorIndex,b.GridIndex)
                 return <div>{str}</div>;
             }
         },

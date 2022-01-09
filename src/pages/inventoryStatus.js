@@ -43,7 +43,9 @@ class InventoryStatus extends Component {
         loading:false,
         // Inventory:[],
           //合并完了的库存信息
-          MergedInventory:[]
+          MergedInventory:[],
+          //当前库存存量一共有多少
+          totalCount :0
       }
   componentDidMount() {
       this.getAndShowCurrentInventory();
@@ -72,9 +74,12 @@ class InventoryStatus extends Component {
             }
         }
         let keys = Object.keys(dic);
+        let totalCount = 0;
         for (let i = 0; i < keys.length; i++) {
             ret.push(dic[keys[i]]);
+            totalCount += dic[keys[i]].Count;
         }
+        this.setState({totalCount:totalCount});
         return ret;
     }
 
@@ -139,6 +144,7 @@ getAndShowCurrentInventory() {
     return (
       <div className={classNames.main}>
           <div className={classNames.titleLine}>当前库存
+              <div>总存量:{this.state.totalCount}</div>
               <Button size={'small'} type={'primary'}
                       onClick={()=>{this.getAndShowCurrentInventory()}}
               >刷新</Button>
