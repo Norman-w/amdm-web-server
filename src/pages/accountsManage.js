@@ -1,10 +1,194 @@
 import React, {Component} from 'react';
+import classNames from './accountsManage.module.css';
+import {Spin,Input,Button, message, Modal, Table} from "antd";
+import AccountShower from "./AccountShower";
+import app from "../app";
+import NewAccount from "./dialog/NewAccount";
 
 class AccountsManage extends Component {
+    componentDidMount() {
+        this.loadAccounts();
+    }
+  state={
+    accounts:[],
+    selectedAccount:null,
+    creating:false,
+    requesting:false,
+  }
+  abortController = new AbortController();
+  onClickCreateAccount()
+  {
+      let that = this;
+    let md = Modal.info(
+        {
+          title:'请输入用户名并设置密码',
+          centered:true,
+          content:<NewAccount onCancel={()=>{
+              md.destroy()
+          }}
+                              onSubmit={(user,pass)=>
+                              {
+                                  that.addUser2Sql(user,pass,()=>{
+                                  })
+                                  md.destroy();
+                              }
+                              }
+          />,
+          okButtonProps:{
+            hidden:true
+          }
+        }
+    )
+  }
+  addUser2Sql(userName,passWord,onSuccess)
+  {
+    if (this.state.requesting)
+    {
+
+    }
+    else
+    {
+      this.setState({requesting:true}
+          ,()=>
+          {
+            let that = this;
+            app.doPost2(
+                {
+                  url:app.setting.serverSideApiRouterUrl,
+                  apiName:'account.add',
+                  params:
+                      {
+                        userName:userName,passWord:passWord
+                      },
+                  onFinish:(res)=>
+                  {
+                    if (res.IsError)
+                    {
+                      message.warn(res.ErrMsg);
+                      that.setState({requesting:false,creating:false});
+                    }
+                    else
+                    {
+                        message.success('用户 [' + userName + '] 添加成功!')
+                      that.setState({requesting:false,creating:false,selectedAccount:res.NewAccount,accounts:[...that.state.accounts,res.NewAccount]});
+                      if (onSuccess)
+                      {
+                          onSuccess();
+                      }
+                    }
+                  },
+                  onTimeout:()=>
+                  {
+                    that.setState({requesting:false,creating:false});
+                    that.abortController = new AbortController();
+                  },
+                }
+            )
+          })
+    }
+  }
+  loadAccounts()
+  {
+      if (this.state.requesting)
+      {}
+      else
+      {
+          this.setState({requesting:true},
+              ()=>
+              {
+                  let that = this;
+                  app.doPost2(
+                      {
+                          url:app.setting.serverSideApiRouterUrl,
+                          apiName:'accounts.get',
+                          params:
+                              {
+                              },
+                          onFinish:(res)=>
+                          {
+                              if (res.IsError)
+                              {
+                                  message.warn(res.ErrMsg);
+                                  that.setState({requesting:false});
+                              }
+                              else
+                              {
+                                  that.setState({requesting:false, accounts:res.Accounts});
+                              }
+                          },
+                          onTimeout:()=>
+                          {
+                              that.setState({requesting:false});
+                              that.abortController = new AbortController();
+                          },
+                      }
+                  )
+              }
+          )
+      }
+  }
   render() {
+      let content = this.state.requesting?<div className={classNames.loadingArea}><Spin/></div>:
+          <div className={classNames.content}>
+              <div className={classNames.listArea}>
+                  <div className={classNames.list}>
+                      <div className={classNames.listTitle}>
+                          <div>编号</div>
+                          <div>账号</div>
+                      </div>
+                      <div className={classNames.listRecords}>
+                          {
+                              this.state.accounts.map((acc,index)=>
+                              {
+                                  let cls = this.state.selectedAccount === acc? classNames.listRecordSelected:classNames.listRecord;
+                                  return <div className={cls} key={index}
+                                              onClick={()=>
+                                              {
+                                                  this.setState({selectedAccount:acc});
+                                              }}
+                                  >
+                                      <div className={classNames.idText}>{acc.Id}</div>
+                                      <div className={classNames.userText}>{acc.UserName}</div>
+                                  </div>
+                              })
+                          }
+                      </div>
+                  </div>
+                  <div className={classNames.addUserBtnLine}>
+                      <Button type={'primary'} onClick={this.onClickCreateAccount.bind(this)}>添加账户</Button>
+                  </div>
+              </div>
+              <div className={classNames.detailArea}>
+                  <AccountShower account={this.state.selectedAccount} editing={this.state.creating} onSave={()=>{
+                      this.loadAccounts();
+                  }} onDelete={(Id)=>{
+                      if (this.state.accounts)
+                      {
+                          console.log('要删除的ID')
+                          let index = -1;
+                          for (let i = 0; i < this.state.accounts.length; i++) {
+                              let current = this.state.accounts[i];
+                              if(current.Id === Id)
+                              {
+                                  index = i;
+                                  break;
+                              }
+                          }
+                          if (index>=0) {
+                              let newState = this.state;
+                              newState.accounts.splice(index,1);
+                              newState.selectedAccount= {};
+                              this.setState(newState);
+                              console.log('当前的账户表:',this.state);
+                          }
+                      }
+                  }}/>
+              </div>
+          </div>
     return (
-      <div>
-        账户管理
+      <div className={classNames.main}>
+        <div className={classNames.title}>账户管理</div>
+          {content}
       </div>
     );
   }
