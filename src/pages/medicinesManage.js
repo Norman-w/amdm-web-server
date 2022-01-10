@@ -164,9 +164,9 @@ class MedicinesManage extends Component {
               }
 
             },
-            onTimeout:()=>
+            onFail:(isTimeout)=>
             {
-              message.warn('获取药品信息超时');
+              message.warn(isTimeout?'获取药品信息超时':'请求失败,请重试');
               that.setState({loading:false});
             },
               abortController:this.abortController
@@ -232,9 +232,9 @@ class MedicinesManage extends Component {
               console.log('添加药品信息到数据库完成', res);
             }
           },
-          onTimeout:()=>
+          onFail:(isTimeout)=>
           {
-            message.error('执行药品添加操作超时');
+            message.error(isTimeout?'执行药品添加操作超时':'请求失败,请重试');
           },
         }
     )
@@ -252,9 +252,9 @@ class MedicinesManage extends Component {
           message.success('药品信息已保存');
           that.onSearchMedicine(that.state.pagination);
         },
-        onTimeout:()=>
+        onFail:(t)=>
         {
-          message.error('更新药品数据超时');
+          message.error(t?'更新药品数据超时':'操作失败请重试');
         },
           abortController:this.abortController,
         timeoutMS:4000,
@@ -283,9 +283,9 @@ class MedicinesManage extends Component {
           }
           that.onSearchMedicine(that.state.pagination);
         },
-        onTimeout:()=>
+        onFail:(t)=>
         {
-          message.error('删除药品数据超时');
+          message.error(t?'删除药品数据超时':'操作失败请重试');
         },
           abortController:this.abortController,
         timeoutMS:4000,

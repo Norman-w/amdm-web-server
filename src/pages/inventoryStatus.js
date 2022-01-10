@@ -121,9 +121,9 @@ getAndShowCurrentInventory() {
                   that.setState({loading:false});
                 }
               },
-              onTimeout:()=>
+              onFail:(t)=>
               {
-                message.warn('获取库存信息超时');
+                message.warn(t?'获取库存信息超时':'请检查网络连接');
                 that.setState({loading:false});
               }
             }

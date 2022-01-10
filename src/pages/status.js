@@ -11,14 +11,13 @@ class Status extends Component {
       StatusName:'正在获取交互状态...'
   }
   interval;
-  url='http://192.168.2.191:8080';
   componentDidMount() {
       //region 执行一个获取付药机8080接口传输的数据
       let api = 'peripheralsstatus.get';
       let that = this;
       app.doPost(
           {
-              url:this.url,
+              url:app.setting.clientSideAMDMControlPanelRouterUrl,
               headers:
                   {
                       'Content-Type':'application/json;charset=utf-8;',
@@ -38,7 +37,7 @@ class Status extends Component {
       let getStatusFunc = ()=>
       {
           app.doPost({
-              url:this.url,
+              url:app.setting.clientSideAMDMControlPanelRouterUrl,
               headers:
                   {
                       'Content-Type':'application/json;charset=utf-8;',
@@ -48,6 +47,7 @@ class Status extends Component {
                   {},
               finish:(res)=>
               {
+                console.log('获取状态完成', res);
                   that.setState({IsWorking:res.IsWorking,StatusName:res.StatusName});
               }
           })
@@ -55,7 +55,7 @@ class Status extends Component {
       getStatusFunc();
       //region 定时获取取药状态
       this.interval = setInterval(getStatusFunc,
-          200)
+          1000)
       //endregion
   }
 

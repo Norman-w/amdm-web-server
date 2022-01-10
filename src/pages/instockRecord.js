@@ -152,9 +152,9 @@ class InstockRecord extends Component {
                     that.setState(newState);
                   },
                   timeoutMS:3000,
-                  onTimeout:()=>
+                  onFail:(t)=>
                   {
-                    message.warn('获取上药记录超时');
+                    message.warn(t?'获取上药记录超时':'请检查网络连接');
                     that.setState({loading:false})
                   }
                 }

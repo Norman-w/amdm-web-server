@@ -149,9 +149,9 @@ class DeliveryRecordInfo extends React.Component{
               });
             }
           }
-          ,onTimeout:()=>
+          ,onFail:(t)=>
           {
-            message.warn('获取凭据图片超时');
+            message.warn(t?'获取凭据图片超时':'获取凭据图片失败,请重试');
           },
             abortController :this.signal,
           timeoutMS:5000,

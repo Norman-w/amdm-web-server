@@ -53,13 +53,13 @@ class LoginForm extends React.Component{
                             if (!that.abortController.signal.aborted)
                             {
                                 that.abortController = new AbortController();
-                                that.setState({loading:false});
                             }
+                          that.setState({loading:false});
                         },
-                        onTimeout: () => {
-                            message.warn('登陆超时,请检查网络后重试');
-                            that.abortController = new AbortController();
+                        onFail: (t) => {
+                            message.warn(t?'登陆超时,请检查网络后重试':'请检查网络连接');
                             that.setState({loading:false});
+                          that.abortController = new AbortController();
                         },
                         abortController:that.abortController,
                     }

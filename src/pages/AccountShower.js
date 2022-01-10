@@ -49,6 +49,8 @@ class AccountShower extends Component {
         {
         }
         else {
+          let param = this.state;
+          delete param['Password'];
             this.setState({requsting: true}
                 , () => {
                     let that = this;
@@ -56,11 +58,11 @@ class AccountShower extends Component {
                         {
                             url:app.setting.serverSideApiRouterUrl,
                             apiName:'account.update',
-                            params:this.state,
-                            onTimeout:()=>{message.warn('保存账户信息超时');that.abortController = new AbortController();},
+                            params:param,
+                            onFail:(t)=>{message.warn(t?'保存账户信息超时':'请检查网络');that.abortController = new AbortController();},
                             onFinish:(res)=>
                             {
-                                if (res.IsErr)
+                                if (res.IsError)
                                 {
                                     message.error(res.ErrMsg);
                                     that.setState({
@@ -70,20 +72,19 @@ class AccountShower extends Component {
                                 else
                                 {
                                     message.success('新的账户信息已保存');
-                                    if (app.account && app.account.Id === res.UpdatedAccount.Id) {
+                                  console.log(res);
+                                    if (app.account && res.UpdatedAccount && app.account.Id === res.UpdatedAccount.Id) {
                                         app.account = res.UpdatedAccount;
                                     }
                                     that.setState(
                                         {
-                                            ...that.state,
-                                            ...res.UpdatedAccount,
                                             requesting:false,
                                             editing:false,
                                         }
                                     )
                                     if (that.props.onSave)
                                     {
-                                        that.props.onSave();
+                                        that.props.onSave(res.UpdatedAccount);
                                     }
                                 }
                                 that.abortController = new AbortController();
@@ -110,7 +111,7 @@ class AccountShower extends Component {
                             url:app.setting.serverSideApiRouterUrl,
                             apiName:'account.delete',
                             params:{Id:this.state.Id},
-                            onTimeout:()=>{message.warn('删除账户信息超时');that.abortController = new AbortController();},
+                            onFail:(t)=>{message.warn(t?'删除账户信息超时':'请检查网络');that.abortController = new AbortController();},
                             onFinish:(res)=>
                             {
                                 if (res.IsError)
@@ -197,8 +198,9 @@ class AccountShower extends Component {
                                     that.setState({requesting:false});
                                 }
                             },
-                            onTimeout:()=>
+                            onFail:(t)=>
                             {
+                              message.warn(t?'修改密码超时':'请检查网络');
                                 that.setState({requesting:false});
                                 that.abortController = new AbortController();
                             },

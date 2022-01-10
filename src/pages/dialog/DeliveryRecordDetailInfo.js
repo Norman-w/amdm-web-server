@@ -50,9 +50,9 @@ class DeliveryRecordDetailInfo extends Component {
                                         });
                                     }
                                 }
-                                ,onTimeout:()=>
+                                ,onFail:(t)=>
                                 {
-                                    message.warn('获取凭据图片超时');
+                                    message.warn(t?'获取凭据图片超时':'获取凭据图片失败请重试');
                                     that.setState({imagesLoading:false});
                                 },
                                 abortController :this.abortController,

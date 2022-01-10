@@ -2,13 +2,13 @@ import {message} from 'antd'
 
 class App {
     debugMode = true;
-    setting= {
+    setting3= {
         SnapshotUrlBase :'http://192.168.2.191',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
         clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
         serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
     };
-    setting1= {
+    setting= {
         SnapshotUrlBase :'http://10.10.10.17',
         clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
@@ -188,7 +188,7 @@ class App {
 
     //region 使用post的方式请求服务器,第二个版本 2022年01月05日13:48:08
     //当页面已经关闭了的时候,就是已经发了取消信号.如果取消信号已经发出了,那就直接取消不调用回调函数了.
-    doPost2 = function ({url,apiName,params,abortController, onFinish, onTimeout,timeoutMS,session})
+    doPost2 = function ({url,apiName,params,abortController, onFinish, onFail,timeoutMS,session})
     {
         let isTimeout = false;
         //中断控制器
@@ -230,7 +230,15 @@ class App {
         }
         //请求控制器
         let requestPromise = (request) => {
-            return fetch(request);
+          let fetchPromise = fetch(request);
+          fetchPromise.catch((reason => {
+            console.log('fetch发生了错误:', reason);
+            if (onFail)
+            {
+              onFail(isTimeout);
+            }
+          }))
+            return fetchPromise;
         };
         Promise.race([timeoutPromise(timeoutMS?timeoutMS:3000), requestPromise(request)])
             .then(
@@ -238,9 +246,9 @@ class App {
                     if (isTimeout)
                     {
                         //超时了不需要请求的结果了,给的response其实是个error
-                      if (onTimeout)
+                      if (onFail)
                       {
-                        onTimeout()
+                        onFail(true);
                       }
                     }
                     else
@@ -269,10 +277,6 @@ class App {
                 //region 发生了错误以后,也清空计时器
                 clearTimeout(timeOutController);
                 //endregion
-                if (isTimeout && onTimeout)
-                {
-                    onTimeout()
-                }
             });
     }
     //endregion

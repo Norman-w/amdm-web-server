@@ -77,8 +77,9 @@ class AccountsManage extends Component {
                       }
                     }
                   },
-                  onTimeout:()=>
+                  onFail:(t)=>
                   {
+                    message.warn(t?'添加用户超时':'请检查网络');
                     that.setState({requesting:false,creating:false});
                     that.abortController = new AbortController();
                   },
@@ -116,8 +117,9 @@ class AccountsManage extends Component {
                                   that.setState({requesting:false, accounts:res.Accounts});
                               }
                           },
-                          onTimeout:()=>
+                          onFail:(t)=>
                           {
+                            message.warn(t?'加载用户列表超时': '请检查网络连接');
                               that.setState({requesting:false});
                               that.abortController = new AbortController();
                           },
@@ -159,8 +161,24 @@ class AccountsManage extends Component {
                   </div>
               </div>
               <div className={classNames.detailArea}>
-                  <AccountShower account={this.state.selectedAccount} editing={this.state.creating} onSave={()=>{
-                      this.loadAccounts();
+                  <AccountShower account={this.state.selectedAccount} editing={this.state.creating} onSave={(refAccount)=>{
+                      if (this.state.accounts)
+                      {
+                        for (let i = 0; i < this.state.accounts.length; i++) {
+                          let inList = this.state.accounts[i];
+                          let inRef = refAccount;
+                          console.log('在inlist', inList, '在ref', inRef);
+                          if (!inList || !inRef)
+                          {
+                            continue;
+                          }
+                          if (this.state.accounts[i].Id === refAccount.Id)
+                          {
+                            this.state.accounts[i] = refAccount;
+                            break;
+                          }
+                        }
+                      }
                   }} onDelete={(Id)=>{
                       if (this.state.accounts)
                       {

@@ -152,9 +152,9 @@ class FulfillRecord extends Component {
                 that.setState(newState);
               },
               timeoutMS:10000,
-              onTimeout:()=>
+              onFail:(t)=>
               {
-                message.warn('获取取药记录超时');
+                message.warn(t?'获取取药记录超时':'获取取药记录发生错误,请重试');
                 that.setState({loading:false})
               }
             }
