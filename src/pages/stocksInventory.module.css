@@ -1,0 +1,28 @@
+.main
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  height: 100%;
+}
+.titleLine
+{
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  /*border: 1px solid saddlebrown;*/
+  width: 100%;
+}
+.content
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  /*border : 1px solid forestgreen;*/
+}

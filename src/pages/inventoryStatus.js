@@ -143,7 +143,7 @@ getAndShowCurrentInventory() {
     }
     return (
       <div className={classNames.main}>
-          <div className={classNames.titleLine}>当前库存
+          <div className={classNames.titleLine}>当前总库存
               <div>总存量:{this.state.totalCount}</div>
               <Button size={'small'} type={'primary'}
                       onClick={()=>{this.getAndShowCurrentInventory()}}

@@ -1,0 +1,27 @@
+.main
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width:100%;
+  height: 100%;
+}
+.floor
+{
+  width: 100%;
+  margin: 10px;
+  box-shadow: 1px 1px 3px 1px lightblue;
+  padding: 5px;
+  min-height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.grid
+{
+  width: 30px;
+  height: 20px;
+  border: 1px solid rebeccapurple;
+}

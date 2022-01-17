@@ -6,6 +6,30 @@ import app from "../../app";
 import DeliveryRecordDetailInfo from "./DeliveryRecordDetailInfo";
 // import DeliveryRecordDetailInfo from "./DeliveryRecordDetailInfo";
 
+const SnapshotLocationEnum =
+{
+  /// <summary>
+  /// 付药单据凭证图片
+  /// </summary>
+  DeliveryRecordPaper : "DeliveryRecordPaper",
+  /// <summary>
+  /// 取药斗
+  /// </summary>
+  MedicineBucket : "MedicineBucket",
+  /// <summary>
+  /// 交互区
+  /// </summary>
+  InteractiveArea : "InteractiveArea",
+  /// <summary>
+  /// 取药机械手相机点位1
+  /// </summary>
+  GrabbersArea1 : "GrabbersArea1",
+  /// <summary>
+  /// 取药机械手相机点位2
+  /// </summary>
+  GrabbersArea2 : "GrabbersArea2",
+}
+
 const getImageElem = (picUrl)=>
 {
     if  (picUrl === undefined)
@@ -130,15 +154,15 @@ class DeliveryRecordInfo extends React.Component{
               let interactive = '';
               for (let i = 0; i < res.Snapshots.length; i++) {
                 let current = res.Snapshots[i];
-                if (current.Location==='取药斗上方')
+                if (current.Location=== SnapshotLocationEnum.MedicineBucket)
                 {
                   bucket = app.setting.SnapshotUrlBase+current.FileUrl;
                 }
-                else if(current.Location === '用户交互区')
+                else if(current.Location === SnapshotLocationEnum.InteractiveArea)
                 {
                   interactive = app.setting.SnapshotUrlBase+current.FileUrl;
                 }
-                else if(current.Location === '付药单' )
+                else if(current.Location === SnapshotLocationEnum.DeliveryRecordPaper )
                 {
                   bill = app.setting.SnapshotUrlBase+current.FileUrl;
                 }

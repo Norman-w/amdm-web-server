@@ -22,6 +22,7 @@ import LogView from "./pages/logView";
 import MedicinesManage from "./pages/medicinesManage";
 import LoginForm from "./pages/login/LoginForm";
 import app from "./app";
+import StocksInventory from "./pages/stocksInventory";
 // import DefaultClient from './AMDM_SDK/DefaultClient';
 // import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
 
@@ -151,7 +152,10 @@ class Main extends Component {
                          <SubMenu key="sub2" icon={<InteractionOutlined />} title="库存管理">
                            <Menu.Item key="8"
                                       onClick={()=>{this.setState({currentPage:<InventoryStatus/>})}}
-                           >当前库存</Menu.Item>
+                           >当前总库存</Menu.Item>
+                           <Menu.Item key="eachStockInventory"
+                                      onClick={()=>{this.setState({currentPage:<StocksInventory/>})}}
+                           >各分仓载量</Menu.Item>
                            <Menu.Item key="6"
                                       onClick={()=>{this.setState({currentPage:<InstockRecord/>})}}
                            >上药记录</Menu.Item>
