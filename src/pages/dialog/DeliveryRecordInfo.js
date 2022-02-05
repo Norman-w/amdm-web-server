@@ -11,23 +11,23 @@ const SnapshotLocationEnum =
   /// <summary>
   /// 付药单据凭证图片
   /// </summary>
-  DeliveryRecordPaper : "DeliveryRecordPaper",
+  DeliveryRecordPaper : 0,
   /// <summary>
   /// 取药斗
   /// </summary>
-  MedicineBucket : "MedicineBucket",
+  MedicineBucket : 1,
   /// <summary>
   /// 交互区
   /// </summary>
-  InteractiveArea : "InteractiveArea",
+  InteractiveArea : 2,
   /// <summary>
   /// 取药机械手相机点位1
   /// </summary>
-  GrabbersArea1 : "GrabbersArea1",
+  GrabbersArea1 : 3,
   /// <summary>
   /// 取药机械手相机点位2
   /// </summary>
-  GrabbersArea2 : "GrabbersArea2",
+  GrabbersArea2 : 4,
 }
 
 const getImageElem = (picUrl)=>

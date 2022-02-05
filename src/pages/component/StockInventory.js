@@ -3,18 +3,18 @@ import classNames from './StockInventory.module.css'
 import {message, Spin} from "antd";
 import app from "../../app";
 
-const obj2List = (obj)=>
-{
-  let list = [];
-  let keys = Object.keys(obj);
-  let keysCount = keys.length;
-  for (let i = 0; i < keysCount; i++) {
-    let key = keys[i];
-    let current = obj[key];
-    list.push(current);
-  }
-  return list;
-}
+// const obj2List = (obj)=>
+// {
+//   let list = [];
+//   let keys = Object.keys(obj);
+//   let keysCount = keys.length;
+//   for (let i = 0; i < keysCount; i++) {
+//     let key = keys[i];
+//     let current = obj[key];
+//     list.push(current);
+//   }
+//   return list;
+// }
 
 class StockInventory extends Component {
   state=
@@ -68,16 +68,13 @@ class StockInventory extends Component {
               {
                 let retList = [];
                 // res.MachineInventoryTree.StocksInventory = obj2List(res.MachineInventoryTree.StocksInventory);
-
-                let stocks = obj2List(res.MachineInventoryTree.StocksInventory);
-                for (let i = 0; i < stocks.length; i++) {
-                  let stock = stocks[i];
-                  stock.FloorsInventory = obj2List(stock.FloorsInventory);
-                  for (let j = 0; j < stock.FloorsInventory.length; j++) {
-                    let floor = stock.FloorsInventory[j];
-                    floor.GridsInventory = obj2List(floor.GridsInventory);
-                    retList.push(floor);
-                  }
+                if(res.Machine&&res.Machine.Stocks&& res.Machine.Stocks.length>0 && res.Machine.Stocks[0].Floors)
+                {
+                  retList = res.Machine.Stocks[0].Floors;
+                }
+                else
+                {
+                  message.error('未获取到有效的分仓库存结果信息')
                 }
                 that.setState({floors:retList,loading:false});
                 console.log('转换后的floors', that.state.floors)
@@ -96,7 +93,34 @@ class StockInventory extends Component {
     }
   }
 
-
+  getObjects(grid)
+  {
+    if(!grid)
+      return null;
+    let m = grid["Max"];
+    if (m)
+    {
+      let oStyle = {
+        width:(100/m).toFixed(1)+'%',
+        height: '90%',
+        border:'1px dashed gray',
+        margin:2,
+      }
+      let ret = [];
+      for (let i = 0; i < m; i++) {
+        let oo = {...oStyle
+        ,
+          backgroundColor:i<grid.Count?
+              (grid.Count>=m?'darkgreen':'darkorange')
+              :'none'
+        }
+        ret.push(
+            <div style={oo}/>
+        )
+      }
+      return ret;
+    }
+  }
 
   render() {
     if (this.state.loading)
@@ -105,14 +129,30 @@ class StockInventory extends Component {
         <Spin/>
       </div>
     }
+
     return (
       <div className={classNames.main}>
         {this.state.floors.map(
           (floor,floorIndex)=>
           {
-            return <div key={floorIndex} className={classNames.floor}>
-              {floor.GridsInventory.map((grid,gIndex)=>{
-                return <div key={gIndex} className={classNames.grid}>{grid.Count}</div>
+            let perHeight = 100/this.state.floors.length;
+            let fStyle = {
+              height:''+perHeight.toFixed(1)+'%'
+            };
+            return <div key={floorIndex} className={classNames.floor} style={fStyle}>
+              {floor.Grids.map((grid,gIndex)=>{
+                let gStyle =
+                    {
+                      width:(100/floor.Grids.length).toFixed(1)+'%',
+                      margin:3,
+                    };
+
+                    let objs = this.getObjects(grid);
+                console.log('objs:', objs);
+                return <div key={gIndex} className={classNames.grid} style={gStyle}>
+                  <div className={classNames.medicineName}>{grid.Name}</div>
+                  <div className={classNames.objs}>{objs}</div>
+                </div>
               })}
             </div>
           }

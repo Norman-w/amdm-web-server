@@ -23,6 +23,7 @@ import MedicinesManage from "./pages/medicinesManage";
 import LoginForm from "./pages/login/LoginForm";
 import app from "./app";
 import StocksInventory from "./pages/stocksInventory";
+import { PoweroffOutlined } from '@ant-design/icons';
 // import DefaultClient from './AMDM_SDK/DefaultClient';
 // import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
 
@@ -196,7 +197,7 @@ class Main extends Component {
 {/*              <Button onClick={() => {*/}
 {/*    this.testFunc();*/}
 {/*}}>测试按钮</Button>*/}
-            <Button style={{marginLeft:'20px'}} type={'ghost'} size={'small'}
+            <Button style={{marginLeft:'20px'}} type={'primary'} ghost={true} dashed={true} icon={<PoweroffOutlined />} size={'small'}
                     onClick={
                         ()=>
                         {
