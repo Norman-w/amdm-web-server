@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import classNames from './stocksInventory.module.css'
-import app from "../app";
-import {Spin,message} from "antd";
+// import app from "../app";
+// import {Spin,message} from "antd";
 import StockInventory from "./component/StockInventory";
 
 
@@ -19,7 +19,7 @@ class StocksInventory extends Component {
           各分仓载量
         </div>
         <div className={classNames.content}>
-          <StockInventory stockIndex={this.state.currentStockIndex}></StockInventory>
+          <StockInventory stockIndex={this.state.currentStockIndex}/>
         </div>
       </div>
     );

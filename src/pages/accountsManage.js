@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import classNames from './accountsManage.module.css';
-import {Spin,Input,Button, message, Modal, Table} from "antd";
+import {Spin,Button, message, Modal} from "antd";
 import AccountShower from "./AccountShower";
 import app from "../app";
 import NewAccount from "./dialog/NewAccount";
@@ -174,7 +174,10 @@ class AccountsManage extends Component {
                           }
                           if (this.state.accounts[i].Id === refAccount.Id)
                           {
-                            this.state.accounts[i] = refAccount;
+                            let st = this.state;
+                            st.accounts[i] = refAccount;
+                            this.setState(st);
+                            // this.state.accounts[i] = refAccount;
                             break;
                           }
                         }

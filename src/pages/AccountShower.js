@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import app from "../app";
 import {Button, Input, InputNumber, message, Modal, Radio} from "antd";
 import classNames from "./myAccount.module.css";
-import NewAccount from "./dialog/NewAccount";
+// import NewAccount from "./dialog/NewAccount";
 import ChangePassword from "./dialog/ChangePassword";
 import md5 from 'js-md5';
 

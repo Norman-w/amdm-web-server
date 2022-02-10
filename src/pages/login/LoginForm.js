@@ -2,7 +2,7 @@ import {Space, Form, Input, Button, Spin, Drawer, message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles  from './LoginForm.module.css'
 import React from "react";
-import logo from '../../images/logo-s.png';
+import logo from '../../images/logo.png';
 import app from "../../app";
 import md5 from "js-md5";
 
