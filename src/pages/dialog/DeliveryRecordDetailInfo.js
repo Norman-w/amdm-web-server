@@ -45,6 +45,10 @@ class DeliveryRecordDetailInfo extends Component {
                                     }
                                     else
                                     {
+                                        for (let i = 0; i < res.Snapshots.length; i++) {
+                                            let current = res.Snapshots[i];
+                                            current.FileUrl = app.setting.SnapshotUrlBase+current.FileUrl;
+                                        }
                                         that.setState({
                                             images : res.Snapshots,imagesLoading:false
                                         });
@@ -81,7 +85,7 @@ class DeliveryRecordDetailInfo extends Component {
         for (let i = 0; i < this.state.images.length; i++) {
             imagesElements.push(
                 <div>
-                    <div>{this.state.images[i].Location}</div>
+                    {/*<div>{this.state.images[i].Location}</div>*/}
                     <Image src={this.state.images[i].FileUrl}/>
                 </div>
                 )
