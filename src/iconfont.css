@@ -1,30 +1,34 @@
 @font-face {
-    font-family: "iconfont"; /* Project id 3063555 */
-    src: url('//at.alicdn.com/t/font_3063555_wbgix2p45gs.woff2?t=1640505622290') format('woff2'),
-    url('//at.alicdn.com/t/font_3063555_wbgix2p45gs.woff?t=1640505622290') format('woff'),
-    url('//at.alicdn.com/t/font_3063555_wbgix2p45gs.ttf?t=1640505622290') format('truetype');
+  font-family: "iconfont"; /* Project id 3063555 */
+  src: url('//at.alicdn.com/t/font_3063555_lzk680y7fhk.woff2?t=1645110863010') format('woff2'),
+  url('//at.alicdn.com/t/font_3063555_lzk680y7fhk.woff?t=1645110863010') format('woff'),
+  url('//at.alicdn.com/t/font_3063555_lzk680y7fhk.ttf?t=1645110863010') format('truetype');
 }
 
 .iconfont {
-    font-family: "iconfont" !important;
-    font-size: 16px;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pro-stock-manage:before {
+  content: "\e600";
 }
 
 .icon-wendushezhi2-05-05:before {
-    content: "\e634";
+  content: "\e634";
 }
 
 .icon-zuobiaoxuanqu:before {
-    content: "\e69e";
+  content: "\e69e";
 }
 
 .icon-kongtiao:before {
-    content: "\e671";
+  content: "\e671";
 }
 
 .icon-wenduji:before {
-    content: "\e616";
+  content: "\e616";
 }

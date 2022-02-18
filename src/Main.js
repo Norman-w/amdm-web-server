@@ -1,6 +1,7 @@
 import {Avatar, Button, Layout, Menu, Modal, Tooltip} from 'antd';
 import {
-  HomeOutlined,
+DotChartOutlined,
+  DesktopOutlined,
 BarcodeOutlined,
   FileSearchOutlined,
 InteractionOutlined,
@@ -24,6 +25,7 @@ import LoginForm from "./pages/login/LoginForm";
 import app from "./app";
 import StocksInventory from "./pages/stocksInventory";
 import { PoweroffOutlined } from '@ant-design/icons';
+import GridUsingRecord from "./pages/component/GridUsingRecord";
 // import DefaultClient from './AMDM_SDK/DefaultClient';
 // import AccountsGetRequest from './AMDM_SDK/Request/AccountsGetRequest';
 
@@ -139,7 +141,7 @@ class Main extends Component {
                     }
                 }}
           >
-                         <Menu.Item key="1" icon={<HomeOutlined />}
+                         <Menu.Item key="1" icon={<DesktopOutlined />}
                                     onClick={()=>{this.setState({currentPage:<Status/>})}}
                          >
                         状态信息
@@ -150,20 +152,25 @@ class Main extends Component {
                           药品管理
                         </Menu.Item>
 
-                         <SubMenu key="sub2" icon={<InteractionOutlined />} title="库存管理">
+                         <SubMenu key="sub2" icon={<DotChartOutlined />} title="库存管理">
                            <Menu.Item key="8"
                                       onClick={()=>{this.setState({currentPage:<InventoryStatus/>})}}
                            >当前总库存</Menu.Item>
                            <Menu.Item key="eachStockInventory"
                                       onClick={()=>{this.setState({currentPage:<StocksInventory/>})}}
                            >各分仓载量</Menu.Item>
-                           <Menu.Item key="6"
-                                      onClick={()=>{this.setState({currentPage:<InstockRecord/>})}}
-                           >上药记录</Menu.Item>
-                           <Menu.Item key="7"
-                                      onClick={()=>{this.setState({currentPage:<FulfillRecord/>})}}
-                           >取药记录</Menu.Item>
                          </SubMenu>
+            <SubMenu key="inOutRecords" icon={<InteractionOutlined />} title="流转记录">
+              <Menu.Item key="6"
+                         onClick={()=>{this.setState({currentPage:<InstockRecord/>})}}
+              >上药记录</Menu.Item>
+              <Menu.Item key="7"
+                         onClick={()=>{this.setState({currentPage:<FulfillRecord/>})}}
+              >取药记录</Menu.Item>
+              <Menu.Item key="gridUsingRecords"
+                         onClick={()=>{this.setState({currentPage:<GridUsingRecord/>})}}
+              >药槽使用记录</Menu.Item>
+            </SubMenu>
                          <SubMenu key="sub1" icon={<UserOutlined />} title="账户管理">
                            <Menu.Item key="3"
                                       onClick={()=>{this.setState({currentPage:<MyAccount/>})}}

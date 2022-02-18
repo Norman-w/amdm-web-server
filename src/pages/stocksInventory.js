@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import classNames from './stocksInventory.module.css'
-// import app from "../app";
-// import {Spin,message} from "antd";
 import StockInventory from "./component/StockInventory";
 
 
