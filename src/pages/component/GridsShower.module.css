@@ -1,0 +1,71 @@
+.main
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width:100%;
+    height: 100%;
+}
+.floor
+{
+    width: 100%;
+    /*margin: 1px;*/
+    /*box-shadow: 1px 1px 3px 1px lightblue;*/
+    /*border: 1px solid darkblue;*/
+    /*padding: 5px;*/
+    min-height: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+.grid
+{
+    width: 30px;
+    min-height: 20px;
+    /*height: 100%;*/
+    /*border: 1px solid rebeccapurple;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 3px 1px silver;
+    margin: 3px;
+    /*padding: 2px;*/
+    /*filter: blur(3px);*/
+    cursor: pointer;
+    user-select: none;
+}
+.indexOfStock
+{
+    width: 100%;
+    font-size: 18px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color: darkred;
+}
+.gridLocation
+{
+    width: 100%;
+    font-size: 12px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color: gray;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.gridHover
+{
+    composes: grid;
+    transform: scale(1.1);
+    transition: 0.4s;
+}
+.gridDisable
+{
+    composes: grid;
+    background-color: darkgray;
+}

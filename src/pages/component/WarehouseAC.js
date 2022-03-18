@@ -1,12 +1,8 @@
-// @flow
 import * as React from 'react';
 import classNames from './WarehouseAC.module.css';
 import '../../iconfont.css';
 
-type Props = {
-
-};
-export const WarehouseAc = (props: Props) => {
+export const WarehouseAc = (props) => {
     if (!props.warehouse)
     {
         return '药仓空调状态信息无效';
@@ -28,16 +24,16 @@ export const WarehouseAc = (props: Props) => {
                 </div>
             </div>
 
-            <div className={classNames.status}><div className="iconfont icon-kongtiao" style={{fontSize: 30}}>
-            </div>
-                <div className={classNames.statusText}>
-                空调状态:{props.warehouse.IsACWorking?
-                    <div className={classNames.acWorkingText}>工作中</div>
-                    :
-                    <div className={classNames.acNotWorkingText}>空闲中</div>
-                }
-                </div>
-                </div>
+            {/*<div className={classNames.status}><div className="iconfont icon-kongtiao" style={{fontSize: 30}}>*/}
+            {/*</div>*/}
+            {/*    <div className={classNames.statusText}>*/}
+            {/*    空调状态:{props.warehouse.IsACWorking?*/}
+            {/*        <div className={classNames.acWorkingText}>工作中</div>*/}
+            {/*        :*/}
+            {/*        <div className={classNames.acNotWorkingText}>空闲中</div>*/}
+            {/*    }*/}
+            {/*    </div>*/}
+            {/*    </div>*/}
         </div>
     );
 };
