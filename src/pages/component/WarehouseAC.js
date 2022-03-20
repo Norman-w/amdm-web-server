@@ -1,8 +1,10 @@
 import * as React from 'react';
 import classNames from './WarehouseAC.module.css';
 import '../../iconfont.css';
+import {useState} from "react";
 
 export const WarehouseAc = (props) => {
+  let [editMode,setEditMode] = useState(false);
     if (!props.warehouse)
     {
         return '药仓空调状态信息无效';
@@ -10,7 +12,9 @@ export const WarehouseAc = (props) => {
     let curr = props.warehouse.CurrentTemprature.toFixed(2);
     let dest = props.warehouse.DestTemperature.toFixed(2);
     return (
-        <div className={classNames.main}>
+        <div className={classNames.main} onMouseEnter={()=>{setEditMode(true)}}
+             onMouseLeave={()=>{setEditMode(false)}}
+        >
             <div className={classNames.indexText}>药仓{props.warehouse.WarehouseIndexId+1}</div>
             <div className={classNames.status}><div className="iconfont icon-wenduji" style={{fontSize: 30}}>
             </div>
@@ -23,6 +27,20 @@ export const WarehouseAc = (props) => {
                     设定温度:{dest}℃
                 </div>
             </div>
+          <div hidden={!props||!props.onClickSettingBtn} className={editMode?classNames.setting:classNames.settingOff}
+               onClick={()=>{
+                 if (props&&props.onClickSettingBtn)
+                 {
+                   props.onClickSettingBtn();
+                 }
+               }}
+          >
+            <div className="iconfont icon-shezhi" style={{fontSize: 30}}>
+          </div>
+            <div className={classNames.clickText}>
+              设置
+            </div>
+          </div>
 
             {/*<div className={classNames.status}><div className="iconfont icon-kongtiao" style={{fontSize: 30}}>*/}
             {/*</div>*/}
