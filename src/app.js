@@ -8,17 +8,29 @@ class App {
         clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
         serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
     };
-    setting= {
+    setting3= {
         SnapshotUrlBase :'http://10.10.10.17',
         clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
         serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
     };
-    setting2= {
+    setting6= {
         SnapshotUrlBase :'http://10.211.55.3',
         clientSideAMDMControlPanelRouterUrl:'http://10.211.55.3:8080/',
         clientSideApiRouterUrl:'http://10.211.55.3/clientside/apirouter/',
         serverSideApiRouterUrl:'http://10.211.55.3/serverside/apirouter/',
+    };
+    setting= {
+        SnapshotUrlBase :'http://192.168.2.210',
+        clientSideAMDMControlPanelRouterUrl:'http://192.168.2.210:8080/',
+        clientSideApiRouterUrl:'http://192.168.2.210/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://192.168.2.210/serverside/apirouter/',
+    };
+    setting5= {
+        SnapshotUrlBase :'http://10.10.10.10',
+        clientSideAMDMControlPanelRouterUrl:'http://10.10.10.10:8080/',
+        clientSideApiRouterUrl:'http://10.10.10.10/clientside/apirouter/',
+        serverSideApiRouterUrl:'http://10.10.10.10/serverside/apirouter/',
     };
     //付药机的设置
     amdmSetting={};
@@ -240,7 +252,7 @@ class App {
           }))
             return fetchPromise;
         };
-        Promise.race([timeoutPromise(timeoutMS?timeoutMS:3000), requestPromise(request)])
+        Promise.race([timeoutPromise(timeoutMS?timeoutMS:5000), requestPromise(request)])
             .then(
                 (response)=> {
                     if (isTimeout)

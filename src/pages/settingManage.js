@@ -10,37 +10,66 @@ class SettingManage extends Component {
     PeripheralsStatus:null,
   };
   componentDidMount() {
-    let api = 'peripheralsstatus.get';
-    let that = this;
-    app.doPost(
-      {
-        url:app.setting.clientSideAMDMControlPanelRouterUrl,
-        headers:
+    this.refreshPeripheralsStatus();
+  }
+  refreshPeripheralsStatus()
+  {
+      let api = 'peripheralsstatus.get';
+      let that = this;
+      app.doPost(
           {
-            'Content-Type':'application/json;charset=utf-8;',
-            'apiName':api
-          },
-        params:
+              url:app.setting.clientSideAMDMControlPanelRouterUrl,
+              headers:
+                  {
+                      'Content-Type':'application/json;charset=utf-8;',
+                      'apiName':api
+                  },
+              params:
+                  {
+                      fields:'*'
+                  },
+              finish:(res)=>
+              {
+                  that.setState({PeripheralsStatus:res.PeripheralsStatus})
+              }
+          }
+      )
+  }
+  setACDestTemperature(stockIndex,destTemperature)
+  {
+      let api = 'peripheralsstatus.ac.set';
+      let that = this;
+      app.doPost(
           {
-            fields:'*'
-          },
-        finish:(res)=>
-        {
-          that.setState({PeripheralsStatus:res.PeripheralsStatus})
-        }
-      }
-    )
+              url:app.setting.clientSideAMDMControlPanelRouterUrl,
+              headers:
+                  {
+                      'Content-Type':'application/json;charset=utf-8;',
+                      'apiName':api
+                  },
+              params:
+                  {
+                      StockIndex:0,
+                      DestTemprature:destTemperature,
+                  },
+              finish:(res)=>
+              {
+                  message.success(JSON.stringify(res));
+              }
+          }
+      )
   }
 
   onClickACSettingBtn(warehouse)
   {
-    let current = warehouse.DestTemperature.toFixed(2);
+    let current = warehouse.DestTemperature.toFixed(1);
     let sf = new NumberInputForm();
     sf.show('请输入目标温度','当前设定温度为'+current,
       current,(val)=>
       {
-        message.success('成功设置啦'+ val);
+        this.setACDestTemperature(warehouse.WarehouseIndexId,val);
       }
+      ,true
       )
   }
 

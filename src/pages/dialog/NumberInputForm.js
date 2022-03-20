@@ -8,9 +8,9 @@ class Content extends Component
     value:null,
   }
   componentDidMount() {
-    if (this.ref)
+    if (this.ref && this.ref.current)
     {
-      this.ref.focus();
+      this.ref.current.focus();
     }
     this.setState({placeholder:this.props.placeholder,value:this.props.defaultValue})
   }
@@ -23,7 +23,9 @@ class Content extends Component
       }
     return (
       <div style={style}>
-        <Input ref={this.ref} placeholder={this.state.placeholder} value={this.state.value} />
+        <Input ref={this.ref} placeholder={this.state.placeholder} value={this.state.value}
+        onChange={(e)=>{this.setState({value:e.target.value})}}
+        />
         <div style={{width:'100%',display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'flex-end'}}>
           <Button
             onClick={()=>{
@@ -41,26 +43,48 @@ class Content extends Component
 }
 class NumberInputForm
 {
-  show(title,placeholder,defaultValue,onSubmit)
+  intCheckStr = "1234567890";
+  floatCheckStr = "1234567890.";
+  show(title,placeholder,defaultValue,onSubmit,floatMode=false)
   {
-    let md = Modal.confirm(
+    let md = Modal.info(
       {
+        centered:true,
         title:title,
         content:<Content placeholder={placeholder} defaultValue={defaultValue}
   onOk={(val) => {
     if (val) {
+      let checkStr = floatMode? this.floatCheckStr:this.intCheckStr;
+      let dotCount=0;
       for (let i = 0; i <val.length; i++) {
         let c = val[i];
-        if ("1234567890".indexOf(c)<0)
+        if (checkStr.indexOf(c)<0)
         {
           message.warn('不是有效的数字');
           return;
+        }
+        if (c === '.')
+        {
+          dotCount ++;
+        }
+      }
+      if (floatMode)
+      {
+        if (val.startsWith("."))
+        {
+          val = '0'+val;
+        }
+        if (!parseFloat(val) || isNaN( parseFloat(val)) || dotCount>1)
+        {
+          message.warn('不是有效的小数');
+          return ;
         }
       }
       md.destroy();
       if (onSubmit)
       {
-        onSubmit(val);
+        let ret = floatMode? parseFloat(val): parseInt(val);
+        onSubmit(ret);
       }
     }
     else
@@ -70,6 +94,7 @@ class NumberInputForm
   }}
   />,
         okButtonProps:{hidden:true},
+        cancelButtonProps:{hidden:true}
       }
     )
   }

@@ -9,8 +9,8 @@ export const WarehouseAc = (props) => {
     {
         return '药仓空调状态信息无效';
     }
-    let curr = props.warehouse.CurrentTemprature.toFixed(2);
-    let dest = props.warehouse.DestTemperature.toFixed(2);
+    let curr = props.warehouse.CurrentTemprature.toFixed(1);
+    let dest = props.warehouse.DestTemperature.toFixed(1);
     return (
         <div className={classNames.main} onMouseEnter={()=>{setEditMode(true)}}
              onMouseLeave={()=>{setEditMode(false)}}
