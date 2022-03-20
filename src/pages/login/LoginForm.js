@@ -32,7 +32,7 @@ class LoginForm extends React.Component{
                 app.doPost2(
                     {
                         url: app.setting.serverSideApiRouterUrl,
-                        timeoutMS: 5000,
+                        timeoutMS: 30000,
                         apiName:api,
                         params:
                             {

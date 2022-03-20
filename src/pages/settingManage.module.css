@@ -40,6 +40,10 @@
   padding-left: 10px;
   padding-right: 10px;
   border-left: dashed 1px darkcyan;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
 .AC
 {
@@ -74,4 +78,22 @@
 .medicineWarning
 {
 composes: partLight;
+}
+.flexRow
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.uvSettingBtn
+{
+  transition: 0.4s;
+  cursor: pointer;
+  user-select: none;
+}
+.uvSettingBtnHide
+{
+  composes: uvSettingBtn;
+  transform: scaleY(0);
 }

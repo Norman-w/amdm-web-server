@@ -2,7 +2,7 @@ import {message} from 'antd'
 
 class App {
     debugMode = true;
-    setting1= {
+    setting= {
         SnapshotUrlBase :'http://192.168.2.191',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
         clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
@@ -14,23 +14,11 @@ class App {
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
         serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
     };
-    setting6= {
-        SnapshotUrlBase :'http://10.211.55.3',
-        clientSideAMDMControlPanelRouterUrl:'http://10.211.55.3:8080/',
-        clientSideApiRouterUrl:'http://10.211.55.3/clientside/apirouter/',
-        serverSideApiRouterUrl:'http://10.211.55.3/serverside/apirouter/',
-    };
-    setting= {
+    setting2= {
         SnapshotUrlBase :'http://192.168.2.210',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.210:8080/',
         clientSideApiRouterUrl:'http://192.168.2.210/clientside/apirouter/',
         serverSideApiRouterUrl:'http://192.168.2.210/serverside/apirouter/',
-    };
-    setting5= {
-        SnapshotUrlBase :'http://10.10.10.10',
-        clientSideAMDMControlPanelRouterUrl:'http://10.10.10.10:8080/',
-        clientSideApiRouterUrl:'http://10.10.10.10/clientside/apirouter/',
-        serverSideApiRouterUrl:'http://10.10.10.10/serverside/apirouter/',
     };
     //付药机的设置
     amdmSetting={};
@@ -214,15 +202,31 @@ class App {
         params.session = session?session:app.session;
 
         let request = new Request(url, {
-            method:'post',
+            method:'POST',
             headers: {
                 'Content-Type':'application/json;charset=utf-8;',
                 apiName:apiName,
             },
             body:JSON.stringify(params),
             signal:signal,
-            // credentials:"include"
         });
+        // fetch(url, {
+        //     method: 'POST', // or 'PUT'
+        //     headers: {
+        //         'Content-Type': 'application/json;charset=utf-8;',
+        //     },
+        //     body: JSON.stringify(params),
+        // })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log('Success:', JSON.stringify(params));
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+        // return;
+
+        // console.log(request)
 
         let timeOutController = null;
         //超时控制器
@@ -252,7 +256,7 @@ class App {
           }))
             return fetchPromise;
         };
-        Promise.race([timeoutPromise(timeoutMS?timeoutMS:5000), requestPromise(request)])
+        Promise.race([timeoutPromise(timeoutMS?timeoutMS:200000), requestPromise(request)])
             .then(
                 (response)=> {
                     if (isTimeout)
