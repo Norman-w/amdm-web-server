@@ -37,12 +37,12 @@
 .partContent
 {
   width: 85%;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 60px;
+  padding-right: 60px;
   border-left: dashed 1px darkcyan;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 .AC
@@ -86,14 +86,22 @@ composes: partLight;
   justify-content: center;
   align-items: center;
 }
-.uvSettingBtn
+.settingBtn
 {
   transition: 0.4s;
   cursor: pointer;
   user-select: none;
 }
-.uvSettingBtnHide
+.settingBtnHide
 {
-  composes: uvSettingBtn;
+  composes: settingBtn;
   transform: scaleY(0);
+}
+.lightWord
+{
+  color: cadetblue;
+}
+.grayWord
+{
+  color: lightgray;
 }

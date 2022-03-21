@@ -21,7 +21,6 @@ class SettingManage extends Component {
     let that = this;
     this.refreshInterval = setInterval(()=>{
         that.refreshPeripheralsStatus();
-            console.log('已执行空调温度刷新');
     },
         2000
     )
@@ -226,6 +225,7 @@ class SettingManage extends Component {
     let md = Modal.confirm(
       {
         title : null,
+          centered:true,
         icon:null,
         content:<TimeSelector time={clockDefaultValue} onChange={
           (val)=>
@@ -265,6 +265,242 @@ class SettingManage extends Component {
       }
     );
   }
+
+  onChangeMedicineOrderAutoHideWhenNoActionMS()
+  {
+      let current = this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS/1000;
+      let sf = new NumberInputForm();
+      let that = this;
+      let api = "amdmsetting.update";
+      sf.show('请输入时间,以秒为单位','当前设定值为:'+current,
+          current,(val)=>
+          {
+             app.doPost2(
+                 {
+                 url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                 apiName:api,
+                     headers:
+                         {
+                             'Content-Type':'application/json;charset=utf-8;',
+                             'apiName':api
+                         },
+                     params:
+                         {
+                             field:"UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS",
+                             value:val*1000,
+                         },
+                     onFinish:(res)=>
+                     {
+                         if(res && !res.IsError)
+                         {
+                             console.log(res);
+                             let old = that.state.AMDMSetting;
+                             old.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS = res.NewValue;
+                             that.setState({AMDMSetting:old});
+                             message.success('已更新时间为'+res.NewValue/1000+'秒');
+                         }
+                         else
+                         {
+                             message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                         }
+                     }
+                 }
+             )
+          }
+          ,false
+      )
+  }
+  onNoticeShowerAutoHideMS()
+  {
+      let current = this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS/1000;
+      let sf = new NumberInputForm();
+      let that = this;
+      let api = "amdmsetting.update";
+      sf.show('请输入时间,以秒为单位','当前设定值为:'+current,
+          current,(val)=>
+          {
+              app.doPost2(
+                  {
+                      url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                      apiName:api,
+                      headers:
+                          {
+                              'Content-Type':'application/json;charset=utf-8;',
+                              'apiName':api
+                          },
+                      params:
+                          {
+                              field:"UserInterfaceSetting.NoticeShowerAutoHideMS",
+                              value:val*1000,
+                          },
+                      onFinish:(res)=>
+                      {
+                          if(res && !res.IsError)
+                          {
+                              console.log(res);
+                              let old = that.state.AMDMSetting;
+                              old.UserInterfaceSetting.NoticeShowerAutoHideMS = res.NewValue;
+                              that.setState({AMDMSetting:old});
+                              message.success('已更新时间为'+res.NewValue/1000+'秒');
+                          }
+                          else
+                          {
+                              message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                          }
+                      }
+                  }
+              )
+          }
+          ,false
+      )
+  }
+
+  onChange_默认可装入药机的药品有效期最少多少天()
+  {
+      let current = this.state.AMDMSetting._默认可装入药机的药品有效期最少多少天;
+      if(!current)
+      {
+          current = 10;
+      }
+      let sf = new NumberInputForm();
+      let that = this;
+      let api = "amdmsetting.update";
+      sf.show('请输入默认可装入药机的药品有效期天数','当前设定值为:'+current,
+          current,(val)=>
+          {
+              app.doPost2(
+                  {
+                      url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                      apiName:api,
+                      headers:
+                          {
+                              'Content-Type':'application/json;charset=utf-8;',
+                              'apiName':api
+                          },
+                      params:
+                          {
+                              field:"_默认可装入药机的药品有效期最少多少天",
+                              value:val,
+                          },
+                      onFinish:(res)=>
+                      {
+                          if(res && !res.IsError)
+                          {
+                              console.log(res);
+                              let old = that.state.AMDMSetting;
+                              old._默认可装入药机的药品有效期最少多少天 = res.NewValue;
+                              that.setState({AMDMSetting:old});
+                              message.success('更新默认可装入药机的药品有效期天数为'+res.NewValue);
+                          }
+                          else
+                          {
+                              message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                          }
+                      }
+                  }
+              )
+          }
+          ,false
+      )
+  }
+  onChange_默认可装入药机的药品建议有效期大于多少天()
+  {
+      let current = this.state.AMDMSetting._默认可装入药机的药品建议有效期大于多少天;
+      if(!current)
+      {
+          current = 90;
+      }
+      let sf = new NumberInputForm();
+      let that = this;
+      let api = "amdmsetting.update";
+      sf.show('请输入默认可装入药机的药品建议有效期天数','当前设定值为:'+current,
+          current,(val)=>
+          {
+              app.doPost2(
+                  {
+                      url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                      apiName:api,
+                      headers:
+                          {
+                              'Content-Type':'application/json;charset=utf-8;',
+                              'apiName':api
+                          },
+                      params:
+                          {
+                              field:encodeURIComponent("_默认可装入药机的药品有效期最少多少天"),
+                              value:val,
+                          },
+                      onFinish:(res)=>
+                      {
+                          if(res && !res.IsError)
+                          {
+                              console.log(res);
+                              let old = that.state.AMDMSetting;
+                              old.默认可装入药机的药品建议有效期大于多少天 = res.NewValue;
+                              that.setState({AMDMSetting:old});
+                              message.success('更新可装入药机的药品建议有效期天数为'+res.NewValue);
+                              console.log(res);
+                          }
+                          else
+                          {
+                              message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                          }
+                      }
+                  }
+              )
+          }
+          ,false
+      )
+  }
+  onChange_默认已装入药机的药品有效期小于多少天时提醒()
+  {
+      let current = this.state.AMDMSetting._默认已装入药机的药品有效期小于多少天时提醒;
+      if(!current)
+      {
+          current = 30;
+      }
+      let sf = new NumberInputForm();
+      let that = this;
+      let api = "amdmsetting.update";
+      sf.show('请输入已装入药机的药品有效期小于多少天时提醒','当前设定值为:'+current,
+          current,(val)=>
+          {
+              app.doPost2(
+                  {
+                      url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                      apiName:api,
+                      headers:
+                          {
+                              'Content-Type':'application/json;charset=utf-8;',
+                              'apiName':api
+                          },
+                      params:
+                          {
+                              field:"_默认已装入药机的药品有效期小于多少天时提醒",
+                              value:val,
+                          },
+                      onFinish:(res)=>
+                      {
+                          if(res && !res.IsError)
+                          {
+                              console.log(res);
+                              let old = that.state.AMDMSetting;
+                              old.默认可装入药机的药品建议有效期大于多少天 = res.NewValue;
+                              that.setState({AMDMSetting:old});
+                              message.success('更新已装入药机的药品有效期提醒天数为'+res.NewValue);
+                          }
+                          else
+                          {
+                              message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                          }
+                      }
+                  }
+              )
+          }
+          ,false
+      )
+  }
+
 
   getHHmm(time)
   {
@@ -320,6 +556,31 @@ class SettingManage extends Component {
         UVStartTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime);
         UVEndTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime);
     }
+    let autoReturnTimeMM = 60;
+    if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS)
+    {
+        autoReturnTimeMM = this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS;
+    }
+    let noticeShowerAutoHideMS = 5;
+      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS)
+      {
+          noticeShowerAutoHideMS = this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS;
+      }
+      let mixValidExpiration = 10;
+      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品有效期最少多少天)
+      {
+          noticeShowerAutoHideMS = this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品有效期最少多少天;
+      }
+      let suguestValidExpiration = 90;
+      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品建议有效期大于多少天)
+      {
+          suguestValidExpiration = this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品建议有效期大于多少天;
+      }
+      let alarmExpiration = 30;
+      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认已装入药机的药品有效期小于多少天时提醒)
+      {
+          alarmExpiration = this.state.AMDMSetting.UserInterfaceSetting._默认已装入药机的药品有效期小于多少天时提醒;
+      }
     return (
       <div className={classesName.main}>
         <div className={classesName.title}>
@@ -340,8 +601,8 @@ class SettingManage extends Component {
           <div className={classesName.partName}>紫外线杀菌</div>
           <div className={classesName.partContent}>
             <div className={classesName.flexRow}>每日开启时间
-              <div>{UVStartTime}</div>
-                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }
+              <div className={classesName.lightWord}>{UVStartTime}</div>
+                <div className={this.state.mouseIn === 'uv'?classesName.settingBtn:classesName.settingBtnHide }
                      onClick={()=>{
                        this.onChangeUVLampOnOffTime('on')
                      }}
@@ -349,8 +610,8 @@ class SettingManage extends Component {
                   <div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
             </div>
             <div className={classesName.flexRow}>每日关闭时间
-              <div>{UVEndTime}</div>
-                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }
+              <div className={classesName.lightWord}>{UVEndTime}</div>
+                <div className={this.state.mouseIn === 'uv'?classesName.settingBtn:classesName.settingBtnHide }
                      onClick={()=>{
                        this.onChangeUVLampOnOffTime('off')
                      }}
@@ -364,11 +625,28 @@ class SettingManage extends Component {
           </div>
 
         </div>
-        <div className={classesName.interactiveSetting}>
+        <div className={classesName.interactiveSetting}
+             onMouseEnter={()=>this.setState({mouseIn:'interactive'})}
+             onMouseLeave={()=>this.setState({mouseIn:null})}
+        >
           <div className={classesName.partName}>用户交互</div>
           <div className={classesName.partContent}>
-            <div>在扫描处方二维码后没有操作的话,多少秒执行返回</div>
-            <div>文本+语音提示的全屏消息框在语音播放完毕后多久延迟关闭</div>
+              <div className={classesName.flexRow}>在扫描处方二维码后如<div className={classesName.lightWord}>{autoReturnTimeMM/1000}</div>秒未进行操作将返回
+                  <div className={this.state.mouseIn === 'interactive'?classesName.settingBtn:classesName.settingBtnHide }
+                       onClick={()=>{
+                          this.onChangeMedicineOrderAutoHideWhenNoActionMS();
+                       }}
+                  >
+                      <div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+              </div>
+                <div className={classesName.flexRow}>文本及语音提示的全屏消息框,在语音播放完毕后<div className={classesName.lightWord}>{noticeShowerAutoHideMS/1000}</div>秒延迟关闭
+                    <div className={this.state.mouseIn === 'interactive'?classesName.settingBtn:classesName.settingBtnHide }
+                         onClick={()=>{
+                             this.onNoticeShowerAutoHideMS()
+                         }}
+                    >
+                        <div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+                </div>
           </div>
         </div>
         <div className={classesName.bestMatchGridWay}>
@@ -376,15 +654,39 @@ class SettingManage extends Component {
             药品出仓顺序
           </div>
           <div className={classesName.partContent}>
-            <div>模式1先入库的先出库</div>
-            <div>模式2生产日期快到的先出库(要求药品有生产日期,不然会按照入库顺序出)</div>
+            <div>模式1先入仓药品优先</div>
+            <div>模式2临近有效期优先(要求上药时填写有效期,且每个药槽内的药品正确排序)</div>
           </div>
         </div>
-        <div className={classesName.expiration}>
+        <div className={classesName.expiration}
+             onMouseEnter={()=>this.setState({mouseIn:'expiration'})}
+             onMouseLeave={()=>this.setState({mouseIn:null})}
+        >
           <div className={classesName.partName}>药品有效期控制</div>
-          <div className={classesName.partContent}> 可装入药机的药品有效期最少多少天10
-            可装入药机的药品建议有效期大于多少天90
-            已装入药机的药品有效期小鱼多少天时提醒30</div>
+          <div className={classesName.partContent}>
+              <div className={classesName.grayWord}>每个药品的有效期控制策略可单独在药品管理中设置</div>
+             <div className={classesName.flexRow}>默认可装入药机的药品,有效期至少<div className={classesName.lightWord}>{mixValidExpiration}</div>天
+                 <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
+                      onClick={()=>{
+                          this.onChange_默认可装入药机的药品有效期最少多少天();
+                      }}
+                 ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+             </div>
+              <div className={classesName.flexRow}>默认建议有效期大于<div className={classesName.lightWord}>{suguestValidExpiration}</div>天
+                  <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
+                       onClick={()=>{
+                           this.onChange_默认可装入药机的药品建议有效期大于多少天();
+                       }}
+                  ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+              </div>
+            <div className={classesName.flexRow}>默认当有效期小于<div className={classesName.lightWord}>{alarmExpiration}</div>天时提醒
+                <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
+                     onClick={()=>{
+                         this.onChange_默认已装入药机的药品有效期小于多少天时提醒();
+                     }}
+                ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+            </div>
+            </div>
         </div>
         <div className={classesName.errorProcessMethod}>
           <div className={classesName.partName}>故障处置方案</div>
