@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import classesName  from './settingManage.module.css'
 import app from "../app";
 import {WarehouseAc} from "./component/WarehouseAC";
-import {Switch, message,Modal,TimePicker} from 'antd';
+import {Switch, message, Modal, TimePicker, ConfigProvider} from 'antd';
 import NumberInputForm from "./dialog/NumberInputForm";
 import moment from 'moment';
+import TimeSelector from 'dragable-time-selector/build'
 
 
 class SettingManage extends Component {
@@ -167,6 +168,7 @@ class SettingManage extends Component {
                     if (res&&!res.IsError)
                     {
                         message.success(JSON.stringify(res));
+                        that.loadAMDMSetting();
                     }
                     else
                     {
@@ -209,18 +211,102 @@ class SettingManage extends Component {
           this.setUVLampStatus(false);
       }
   }
-  onChangeUVLampOnOffTime(on,off)
+  onChangeUVLampOnOffTime(mode)
   {
-      if (!on || ! off)
+    let clockDefaultValue = null;
+    if (mode ===  'on')
+    {
+      clockDefaultValue = this.getHHmm(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime);
+    }
+    else if(mode === 'off')
+    {
+      clockDefaultValue = this.getHHmm(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime);
+    }
+    let dest = null;
+    let md = Modal.confirm(
       {
-          console.log('有无效的数值:', on,off);
-          return ;
+        title : null,
+        icon:null,
+        content:<TimeSelector time={clockDefaultValue} onChange={
+          (val)=>
+          {
+            console.log('改变为val',val);
+            dest = val;
+          }
+        }/>,
+        onOk:()=>
+        {
+          let on = null;
+          let off = null;
+          if (mode === 'on')
+          {
+            if (!dest)
+            {
+              md.destroy();
+              return;
+            }
+            message.success(JSON.stringify(dest));
+            on = this.to24String(dest);
+            off = this.to24String(this.getHHmm(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime));
+          }
+          else if(mode === 'off')
+          {
+            if (!dest)
+            {
+              md.destroy();
+              return;
+            }
+            off = this.to24String(dest);
+            on = this.to24String(this.getHHmm(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime));
+          }
+          this.setUVLampOnOffTime(on,off);
+          md.destroy();
+        }
       }
-      on = moment(on);
-      off = moment(off);
-      console.log(on.minutes())
-    this.setUVLampOnOffTime(on,off);
+    );
   }
+
+  getHHmm(time)
+  {
+    if (!time)
+    {
+      return null;
+    }
+    let t = new Date(time);
+    let h = t.getHours();
+    let m = t.getMinutes();
+    let r = 0;
+    if (h>12)
+    {
+      r = 1;
+      h -=12;
+    }
+    let ret = {hour:h,minute:m,round:r};
+    return ret;
+    // let ret = (t.getHours()).toString().padStart(2,'0') + ":"+ t.getMinutes().toString().padEnd(2,'0');
+    // return ret;
+  }
+  getHHmmString(str)
+  {
+    let time = this.getHHmm(str);
+    let h = time.hour.toString().padStart(2,'0');
+    let m = time.minute.toString().padStart(2,"0");
+    let round = time.round>0?"下午":"上午";
+    let ret = h + ":" + m + " " + round;
+    return ret;
+  }
+  to24String(time)
+  {
+    console.log('to24string', time)
+    let hh = time.hour;
+    let mm = time.minute;
+    if (time.round>0)
+    {
+      hh += 12;
+    }
+    return ""+hh.toString().padStart(2,'0')+":"+mm.toString().padStart(2,'0')
+  }
+
 
   render() {
       const format = "HH:mm"
@@ -231,8 +317,8 @@ class SettingManage extends Component {
     let UVEndTime = null;
     if(this.state && this.state.AMDMSetting && this.state.AMDMSetting.DevicesSetting && this.state.AMDMSetting.DevicesSetting.UVLampSetting)
     {
-        UVStartTime = moment(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime);
-        UVEndTime = moment(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime);
+        UVStartTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime);
+        UVEndTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime);
     }
     return (
       <div className={classesName.main}>
@@ -254,22 +340,21 @@ class SettingManage extends Component {
           <div className={classesName.partName}>紫外线杀菌</div>
           <div className={classesName.partContent}>
             <div className={classesName.flexRow}>每日开启时间
-                <TimePicker value={UVStartTime}
-                            format={format}
-                            onChange={(time)=>{
-                                console.log('改变开始时间', time._i);
-                                this.onChangeUVLampOnOffTime(time._i, UVEndTime);
-                            }}
-                />
-                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+              <div>{UVStartTime}</div>
+                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }
+                     onClick={()=>{
+                       this.onChangeUVLampOnOffTime('on')
+                     }}
+                >
+                  <div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
             </div>
             <div className={classesName.flexRow}>每日关闭时间
-                <TimePicker value={UVEndTime} format={format}
-                            onChange={(time)=>{
-                                this.onChangeUVLampOnOffTime(UVStartTime,time._i);
-                            }}
-                />
-                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
+              <div>{UVEndTime}</div>
+                <div className={this.state.mouseIn === 'uv'?classesName.uvSettingBtn:classesName.uvSettingBtnHide }
+                     onClick={()=>{
+                       this.onChangeUVLampOnOffTime('off')
+                     }}
+                ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
             </div>
               <div>当前状态<Switch  checked={status?status.UVLampIsWorking:false} checkedChildren="开启" unCheckedChildren="关闭"
                                 onChange={()=>{

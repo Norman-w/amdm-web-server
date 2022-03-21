@@ -41,6 +41,7 @@
   },
   "homepage": "./",
   "devDependencies": {
+    "jsx-loader": "^0.13.2",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.4"
   }
