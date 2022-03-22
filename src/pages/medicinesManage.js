@@ -53,19 +53,19 @@ class MedicinesManage extends Component {
       title: '药盒宽',
       key: 'BoxWidthMM',
       dataIndex: 'BoxWidthMM',
-      width:80,
+      width:60,
     },
     {
       title: '药盒高',
       dataIndex: 'BoxHeightMM',
       key: 'BoxHeightMM',
-      width:80,
+      width:60,
     },
     {
       title: '药盒长',
       key: 'BoxLongMM',
       dataIndex: 'BoxLongMM',
-      width: 80,
+      width: 60,
     },
       {
           title: '最小有效期',
@@ -99,7 +99,7 @@ class MedicinesManage extends Component {
     {
       title: '操作',
       key: 'action',
-      width: 100,
+      width: 60,
       render:(a,b)=>{
         // console.log('渲染收操作是:', a,b);
         return <Button type={'ghost'} onClick={()=>this.onEditMedicine(b)}>编辑</Button>
@@ -273,8 +273,9 @@ class MedicinesManage extends Component {
         url:app.setting.clientSideApiRouterUrl,
         apiName:'medicine.update',
         params:medicine,
-        onFinish:()=>
+        onFinish:(res)=>
         {
+          message.warn(JSON.stringify(res));
           message.success('药品信息已保存');
           that.onSearchMedicine(that.state.pagination);
         },
@@ -331,6 +332,7 @@ class MedicinesManage extends Component {
             hidden:true
           },
           destroyOnClose:true,
+          centered:true,
           footer:null,
           icon:null,
           width:800,

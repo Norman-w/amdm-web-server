@@ -1,7 +1,7 @@
 .main
 {
     /*width: 1000px;*/
-    min-height: 500px;
+    min-height: 400px;
     /*border: 1px solid red;*/
     display: flex;
     flex-direction: column;
@@ -15,7 +15,17 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+.cpLine
+{
+  composes: infoLine;
+  flex-direction: row;
+}
+.halfInfoLine
+{
+  composes: infoLine;
+  width: 50%;
 }
 .titleLine
 {

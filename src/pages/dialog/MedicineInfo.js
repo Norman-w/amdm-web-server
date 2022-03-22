@@ -13,6 +13,10 @@ const emptyMedicine =
     BoxLongMM:0,
     BoxWidthMM:0,
     BoxHeightMM:0,
+    CLMED:null,
+    SLMED:null,
+    DTOEA:null,
+    CTOLIA:null
   }
 class MedicineInfo extends Component {
     state={
@@ -48,7 +52,7 @@ class MedicineInfo extends Component {
                 let intLong = parseInt(data);
                 if (isNaN(intLong)) {
                     longWarning = '无效的' + name + '信息';
-                } else if (intLong > 300 || intLong < 30) {
+                } else if (intLong > max || intLong < min) {
                     longWarning = '有效值为' + min + '~' + max;
                     // '无效的长度信息,应当介于' + min + unit + '到' + max + unit + '之间';
                 }
@@ -109,6 +113,11 @@ class MedicineInfo extends Component {
         let widthWarning = this.getWarningLabel(this.state.BoxWidthMM, '药盒宽度','毫米', 30,300);
         let heightWarning = this.getWarningLabel(this.state.BoxHeightMM, '药盒高度','毫米', 30,300);
         //endregion
+      let CLMEDWarning = this.getWarningLabel(this.state.CLMED, '最小有效期天数', '天', 1,this.state.SLMED>0?this.state.SLMED:365);
+      let SLMEDWarning = this.getWarningLabel(this.state.SLMED, '建议有效期天数', '天', this.state.CLMED>0?this.state.CLMED:1,365*3);
+      let DTOEAWarning = this.getWarningLabel(this.state.DTOEA, '少于有效期时提醒天数', '天' ,1,365*3);
+
+      let CTOLIAWarning = this.getWarningLabel(this.state.CTOLIA, '库存预警阈值', '', 0,1000)
 
       //region 是否可以提交修改或者新增
       let canSubmit = true;
@@ -118,20 +127,24 @@ class MedicineInfo extends Component {
       }
       //endregion
         return <div id={'main'} className={classNames.main}>
-            <div id={'条码行'} className={classNames.infoLine}>
-                <div id={'条码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>条码</div>
-                <Input id={'条码输入框'} placeholder={'请输入药品条码'} value={this.state.Barcode} onChange={(e) => {
-    this.setState({Barcode: e.target.value})
-}}/>
-                <div id={'条码提示'} className={classNames.warningText}>{barcodeWarning}</div>
+          <div className={classNames.cpLine}>
+            <div id={'条码行'} className={classNames.halfInfoLine}>
+              <div id={'条码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>条码</div>
+              <Input id={'条码输入框'} placeholder={'请输入药品条码'} value={this.state.Barcode} onChange={(e) => {
+                this.setState({Barcode: e.target.value})
+              }}/>
+              <div id={'条码提示'} className={classNames.warningText}>{barcodeWarning}</div>
             </div>
-          <div id={'his系统编码行'} className={classNames.infoLine}>
-            <div id={'his编码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>HIS系统内部药品码</div>
-            <Input id={'his编码输入框'} placeholder={'请输入HIS系统内部的药品编码'} value={this.state.IdOfHIS} onChange={(e) => {
-              this.setState({IdOfHIS: e.target.value})
-            }}/>
-            <div id={'his编码输入框提示'} className={classNames.warningText}>{hisCodeWarning}</div>
+            <div id={'his系统编码行'} className={classNames.halfInfoLine}>
+              <div id={'his编码文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>HIS系统内部药品码</div>
+              <Input id={'his编码输入框'} placeholder={'请输入HIS系统内部的药品编码'} value={this.state.IdOfHIS} onChange={(e) => {
+                this.setState({IdOfHIS: e.target.value})
+              }}/>
+              <div id={'his编码输入框提示'} className={classNames.warningText}>{hisCodeWarning}</div>
+            </div>
           </div>
+
+
             <div id={'药品名称行'} className={classNames.infoLine}>
                 <div id={'名称文字和星号'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>名称</div>
                 <Input id={'名称输入框'} placeholder={'请输入药品名称'} value={this.state.Name} onChange={(e) => {
@@ -139,11 +152,23 @@ class MedicineInfo extends Component {
 }}/>
                 <div id={'名称提示'} className={classNames.warningText}>{nameWarning}</div>
             </div>
-            <div id={'厂商行'} className={classNames.infoLine}>
+          <div className={classNames.cpLine}>
+
+          </div>
+            <div id={'厂商行'} className={classNames.cpLine}>
+              <div className={classNames.halfInfoLine}>
                 <div id={'厂商文字和星号'}>厂商</div>
-                <Input id={'厂商输入框'} placeholder={'请输入药品厂商'} value={this.state.Company} onChange={(e) => {
+                <Input id={'厂商输入框'} placeholder={'请输入药品厂商'} width={300} value={this.state.Company} onChange={(e) => {
     this.setState({Company: e.target.value})
 }}/>
+              </div>
+              <div id={'库存预警阈值处'} className={classNames.halfInfoLine}>
+                <div id={'星号库存预警数'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>库存预警数</div>
+                <Input id={'库存预警输入'} placeholder={''} value={this.state.CTOLIA} onChange={(e) => {
+                  this.setState({CTOLIA: e.target.value})
+                }}/>
+                <div id={'库存预警提示'} className={classNames.warningText}>{CTOLIAWarning}</div>
+              </div>
             </div>
             <div id={'药盒尺寸信息行'} className={classNames.sizeLine}>
                 <div id={'药盒长度区域'}>
@@ -168,6 +193,37 @@ class MedicineInfo extends Component {
                     <div id={'药盒高度提示'} className={classNames.warningText}>{heightWarning}</div>
                 </div>
             </div>
+
+
+
+          <div id={'严控有效期模式'} className={classNames.sizeLine}>
+            <div id={'最小天数'}>
+              <div id={'星号最小天数'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>最小有效期需大于(天)</div>
+              <Input id={'最小有效期天输入'} placeholder={''} value={this.state.CLMED} onChange={(e) => {
+                this.setState({CLMED: e.target.value})
+              }}/>
+              <div id={'最小天数提示'} className={classNames.warningText}>{CLMEDWarning}</div>
+            </div>
+            <div id={'建议天数'}>
+              <div id={'星号建议天数'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>建议有效期大于(天)</div>
+              <Input id={'建议天数输入'} placeholder={''} value={this.state.SLMED} onChange={(e) => {
+                this.setState({SLMED: e.target.value})
+              }}/>
+              <div id={'建议天数提示'} className={classNames.warningText}>{SLMEDWarning}</div>
+            </div>
+            <div id={'预警阈值'}>
+              <div id={'星号预警阈值'} className={classNames.titleLine}><div style={{color:'red'}}>*</div>少于有效期时提醒(天)</div>
+              <Input id={'预警阈值输入'} placeholder={''} value={this.state.DTOEA} onChange={(e) => {
+                this.setState({DTOEA: e.target.value})
+              }}/>
+              <div id={'预警阈值提示'} className={classNames.warningText}>{DTOEAWarning}</div>
+            </div>
+          </div>
+
+
+
+
+
 
             <div id={'按钮行'} className={classNames.buttonLine}>
                 <Button type={'primary'} disabled={!canSubmit} onClick={()=>{
