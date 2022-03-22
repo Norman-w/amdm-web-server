@@ -2,6 +2,12 @@ import {message} from 'antd'
 
 class App {
     debugMode = true;
+  setting3= {
+    SnapshotUrlBase :'http://10.10.10.17',
+    clientSideAMDMControlPanelRouterUrl:'http://192.168.50.40:8080/',
+    clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
+    serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
+  };
     setting= {
         SnapshotUrlBase :'http://192.168.2.191',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
