@@ -485,9 +485,9 @@ class SettingManage extends Component {
           ,false
       )
   }
-  onChangeDefaultCountThresholdOfLowInventoryAlert()
+  onChangeDefaultDaysThresholdOfExpirationAlert()
   {
-      let current = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert;
+      let current = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultDaysThresholdOfExpirationAlert;
       if(!current)
       {
           current = 30;
@@ -505,7 +505,7 @@ class SettingManage extends Component {
 
                       params:
                           {
-                              field:"ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert",
+                              field:"ExpirationStrictControlSetting.DefaultDaysThresholdOfExpirationAlert",
                               value:val,
                           },
                       onFinish:(res)=>
@@ -514,7 +514,7 @@ class SettingManage extends Component {
                           {
                               console.log(res);
                               let old = that.state.AMDMSetting;
-                              old.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert = res.NewValue;
+                              old.ExpirationStrictControlSetting.DefaultDaysThresholdOfExpirationAlert = res.NewValue;
                               that.setState({AMDMSetting:old});
                               message.success('更新已装入药机的药品有效期提醒天数为'+res.NewValue);
                           }
@@ -607,7 +607,7 @@ class SettingManage extends Component {
       {
           mixValidExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCanLoadMinExpirationDays;
           suggestValidExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays;
-          alarmExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert;
+          alarmExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultDaysThresholdOfExpirationAlert;
           enableExpirationStrictControl = this.state.AMDMSetting.ExpirationStrictControlSetting.Enable;
       }
     return (
@@ -727,7 +727,7 @@ class SettingManage extends Component {
             <div className={classesName.flexRow}>默认当有效期小于<div className={classesName.lightWord}>{alarmExpiration}</div>天时提醒
                 <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
                      onClick={()=>{
-                         this.onChangeDefaultCountThresholdOfLowInventoryAlert();
+                         this.onChangeDefaultDaysThresholdOfExpirationAlert();
                      }}
                 ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
             </div>

@@ -21,6 +21,7 @@ class MedicinesManage extends Component {
       pageSize: defaultPageSize,
     },
   }
+  //region 表格中显示的列信息
   columns = [
     {
       title: 'HIS码',
@@ -66,6 +67,30 @@ class MedicinesManage extends Component {
       dataIndex: 'BoxLongMM',
       width: 80,
     },
+      {
+          title: '最小有效期',
+          key: 'CLMED',
+          dataIndex: 'CLMED',
+          width: 80,
+      },
+      {
+          title: '建议有效期',
+          key: 'SLMED',
+          dataIndex: 'SLMED',
+          width: 80,
+      },
+      {
+          title: '有效期预警',
+          key: 'CTOLIA',
+          dataIndex: 'CTOLIA',
+          width: 80,
+      },
+      {
+          title: '库存预警',
+          key: 'CTOLIA',
+          dataIndex: 'CTOLIA',
+          width: 80,
+      },
     // {
     //   title: '创建时间',
     //   key: 'CreateTime',
@@ -81,6 +106,7 @@ class MedicinesManage extends Component {
       }
     }
   ];
+  //endregion
 
   abortController = new AbortController();
   componentDidMount() {
