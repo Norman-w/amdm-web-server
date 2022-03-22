@@ -210,30 +210,12 @@ class App {
         let request = new Request(url, {
             method:'POST',
             headers: {
-                'Content-Type':'application/json;charset=utf-8;',
+                'Content-Type':'application/json;charset=utf-8',
                 apiName:apiName,
             },
             body:JSON.stringify(params),
             signal:signal,
         });
-        // fetch(url, {
-        //     method: 'POST', // or 'PUT'
-        //     headers: {
-        //         'Content-Type': 'application/json;charset=utf-8;',
-        //     },
-        //     body: JSON.stringify(params),
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log('Success:', JSON.stringify(params));
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
-        // return;
-
-        // console.log(request)
-
         let timeOutController = null;
         //超时控制器
         let timeoutPromise = (timeout) => {

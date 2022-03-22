@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import classesName  from './settingManage.module.css'
+import classesName from './settingManage.module.css'
 import app from "../app";
 import {WarehouseAc} from "./component/WarehouseAC";
-import {Switch, message, Modal, TimePicker, ConfigProvider} from 'antd';
+import {message, Modal, Spin, Switch} from 'antd';
 import NumberInputForm from "./dialog/NumberInputForm";
-import moment from 'moment';
 import TimeSelector from 'dragable-time-selector/build'
+import LostAmdmConnect from "./component/LostAMDMConnect";
 
 
 class SettingManage extends Component {
@@ -13,6 +13,7 @@ class SettingManage extends Component {
     PeripheralsStatus:null,
       mouseIn:null,
       AMDMSetting:null,
+      onLine:false,
   };
   refreshInterval = null;
   componentDidMount() {
@@ -33,23 +34,28 @@ class SettingManage extends Component {
   {
       let api = 'peripheralsstatus.get';
       let that = this;
-      app.doPost(
+      app.doPost2(
           {
               url:app.setting.clientSideAMDMControlPanelRouterUrl,
               headers:
                   {
                       'Content-Type':'application/json;charset=utf-8;',
-                      'apiName':api
                   },
+              apiName:api,
               params:
                   {
                       fields:'*',
                       forceRefresh:true,
                   },
-              finish:(res)=>
+              onFinish:(res)=>
               {
-                  that.setState({PeripheralsStatus:res.PeripheralsStatus})
+                  that.setState({PeripheralsStatus:res.PeripheralsStatus,onLine:true})
                   // console.log('目标温度:',res.PeripheralsStatus.WarehousesACStatus[0]);
+              }
+              ,onFail:(res)=>
+              {
+                  console.log(res);
+                  that.setState({onLine:false});
               }
           }
       )
@@ -58,24 +64,29 @@ class SettingManage extends Component {
   {
       let api = 'setting.get';
       let that = this;
-      app.doPost(
+      app.doPost2(
           {
               url:app.setting.clientSideAMDMControlPanelRouterUrl,
               headers:
                   {
                       'Content-Type':'application/json;charset=utf-8;',
-                      'apiName':api
                   },
+              apiName:api,
               params:
                   {
                   },
-              finish:(res)=>
+              onFinish:(res)=>
               {
                   if (res&&!res.IsError)
                   {
-                      that.setState({AMDMSetting:res.AMDMSetting})
+                      that.setState({AMDMSetting:res.AMDMSetting,onLine:true})
                   }
                   console.log('获取amdmsetting结果', res);
+              },
+              onFail:(res)=>
+              {
+                  console.log(res)
+                  that.setState({onLine:false})
               }
           }
       )
@@ -166,7 +177,7 @@ class SettingManage extends Component {
                 {
                     if (res&&!res.IsError)
                     {
-                        message.success(JSON.stringify(res));
+                        message.success('已重设紫外线杀菌时间');
                         that.loadAMDMSetting();
                     }
                     else
@@ -201,6 +212,7 @@ class SettingManage extends Component {
                   title:'警告!打开紫外线前请确认周围空间无人员停留.否则可能造成紫外线伤害',
                   onOk:()=>{
                       this.setUVLampStatus(true);
+                      md.destroy();
                   }
               }
           )
@@ -245,7 +257,6 @@ class SettingManage extends Component {
               md.destroy();
               return;
             }
-            message.success(JSON.stringify(dest));
             on = this.to24String(dest);
             off = this.to24String(this.getHHmm(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime));
           }
@@ -355,9 +366,41 @@ class SettingManage extends Component {
       )
   }
 
-  onChange_默认可装入药机的药品有效期最少多少天()
+    onChangeEnableExpirationStrictControl(val)
+    {
+        let that = this;
+        let api = "amdmsetting.update";
+        app.doPost2(
+            {
+                url:app.setting.clientSideAMDMControlPanelRouterUrl,
+                apiName:api,
+                params:
+                    {
+                        field:"ExpirationStrictControlSetting.Enable",
+                        value:val,
+                    },
+                onFinish:(res)=>
+                {
+                    if(res && !res.IsError)
+                    {
+                        console.log(res);
+                        let old = that.state.AMDMSetting;
+                        old.ExpirationStrictControlSetting.Enable = res.NewValue;
+                        that.setState({AMDMSetting:old});
+                        message.success('药品有效期严控模式已'+(res.NewValue?"打开":"关闭"));
+                    }
+                    else
+                    {
+                        message.error('操作错误:'+(res&&res.ErrMsg?res.ErrMsg:'未知错误'));
+                    }
+                }
+            }
+        )
+    }
+
+  onChangeDefaultCanLoadMinExpirationDays()
   {
-      let current = this.state.AMDMSetting._默认可装入药机的药品有效期最少多少天;
+      let current = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCanLoadMinExpirationDays;
       if(!current)
       {
           current = 10;
@@ -372,14 +415,9 @@ class SettingManage extends Component {
                   {
                       url:app.setting.clientSideAMDMControlPanelRouterUrl,
                       apiName:api,
-                      headers:
-                          {
-                              'Content-Type':'application/json;charset=utf-8;',
-                              'apiName':api
-                          },
                       params:
                           {
-                              field:"_默认可装入药机的药品有效期最少多少天",
+                              field:"ExpirationStrictControlSetting.DefaultCanLoadMinExpirationDays",
                               value:val,
                           },
                       onFinish:(res)=>
@@ -388,7 +426,7 @@ class SettingManage extends Component {
                           {
                               console.log(res);
                               let old = that.state.AMDMSetting;
-                              old._默认可装入药机的药品有效期最少多少天 = res.NewValue;
+                              old.ExpirationStrictControlSetting.DefaultCanLoadMinExpirationDays = res.NewValue;
                               that.setState({AMDMSetting:old});
                               message.success('更新默认可装入药机的药品有效期天数为'+res.NewValue);
                           }
@@ -403,9 +441,9 @@ class SettingManage extends Component {
           ,false
       )
   }
-  onChange_默认可装入药机的药品建议有效期大于多少天()
+  onChangeDefaultSuggestLoadMinExpirationDays()
   {
-      let current = this.state.AMDMSetting._默认可装入药机的药品建议有效期大于多少天;
+      let current = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays;
       if(!current)
       {
           current = 90;
@@ -420,14 +458,9 @@ class SettingManage extends Component {
                   {
                       url:app.setting.clientSideAMDMControlPanelRouterUrl,
                       apiName:api,
-                      headers:
-                          {
-                              'Content-Type':'application/json;charset=utf-8;',
-                              'apiName':api
-                          },
                       params:
                           {
-                              field:encodeURIComponent("_默认可装入药机的药品有效期最少多少天"),
+                              field:"ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays",
                               value:val,
                           },
                       onFinish:(res)=>
@@ -436,7 +469,7 @@ class SettingManage extends Component {
                           {
                               console.log(res);
                               let old = that.state.AMDMSetting;
-                              old.默认可装入药机的药品建议有效期大于多少天 = res.NewValue;
+                              old.ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays = res.NewValue;
                               that.setState({AMDMSetting:old});
                               message.success('更新可装入药机的药品建议有效期天数为'+res.NewValue);
                               console.log(res);
@@ -452,9 +485,9 @@ class SettingManage extends Component {
           ,false
       )
   }
-  onChange_默认已装入药机的药品有效期小于多少天时提醒()
+  onChangeDefaultCountThresholdOfLowInventoryAlert()
   {
-      let current = this.state.AMDMSetting._默认已装入药机的药品有效期小于多少天时提醒;
+      let current = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert;
       if(!current)
       {
           current = 30;
@@ -469,14 +502,10 @@ class SettingManage extends Component {
                   {
                       url:app.setting.clientSideAMDMControlPanelRouterUrl,
                       apiName:api,
-                      headers:
-                          {
-                              'Content-Type':'application/json;charset=utf-8;',
-                              'apiName':api
-                          },
+
                       params:
                           {
-                              field:"_默认已装入药机的药品有效期小于多少天时提醒",
+                              field:"ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert",
                               value:val,
                           },
                       onFinish:(res)=>
@@ -485,7 +514,7 @@ class SettingManage extends Component {
                           {
                               console.log(res);
                               let old = that.state.AMDMSetting;
-                              old.默认可装入药机的药品建议有效期大于多少天 = res.NewValue;
+                              old.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert = res.NewValue;
                               that.setState({AMDMSetting:old});
                               message.success('更新已装入药机的药品有效期提醒天数为'+res.NewValue);
                           }
@@ -517,8 +546,7 @@ class SettingManage extends Component {
       r = 1;
       h -=12;
     }
-    let ret = {hour:h,minute:m,round:r};
-    return ret;
+      return {hour: h, minute: m, round: r};
     // let ret = (t.getHours()).toString().padStart(2,'0') + ":"+ t.getMinutes().toString().padEnd(2,'0');
     // return ret;
   }
@@ -528,8 +556,7 @@ class SettingManage extends Component {
     let h = time.hour.toString().padStart(2,'0');
     let m = time.minute.toString().padStart(2,"0");
     let round = time.round>0?"下午":"上午";
-    let ret = h + ":" + m + " " + round;
-    return ret;
+      return h + ":" + m + " " + round;
   }
   to24String(time)
   {
@@ -545,41 +572,43 @@ class SettingManage extends Component {
 
 
   render() {
-      const format = "HH:mm"
+      if (!this.state.PeripheralsStatus || !this.state.AMDMSetting)
+      {
+          return <div className={classesName.center}><Spin/>加载中...</div>
+      }
+      if (!this.state.onLine)
+      {
+          return <div className={classesName.center}><LostAmdmConnect/></div>
+      }
     let status = this.state.PeripheralsStatus;
     let acs = status? status.WarehousesACStatus:[];
-    let mouseIn = this.state.mouseIn;
     let UVStartTime = null;
     let UVEndTime = null;
-    if(this.state && this.state.AMDMSetting && this.state.AMDMSetting.DevicesSetting && this.state.AMDMSetting.DevicesSetting.UVLampSetting)
+    if(this.state.AMDMSetting.DevicesSetting.UVLampSetting)
     {
         UVStartTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOnTime);
         UVEndTime = this.getHHmmString(this.state.AMDMSetting.DevicesSetting.UVLampSetting.UVLampOffTime);
     }
-    let autoReturnTimeMM = 60;
-    if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS)
+    let autoReturnTimeMS = 60000;
+    if (this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS)
     {
-        autoReturnTimeMM = this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS;
+        autoReturnTimeMS = this.state.AMDMSetting.UserInterfaceSetting.MedicineOrderAutoHideWhenNoActionMS;
     }
-    let noticeShowerAutoHideMS = 5;
-      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS)
+    let noticeShowerAutoHideMS = 5000;
+      if (this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS)
       {
           noticeShowerAutoHideMS = this.state.AMDMSetting.UserInterfaceSetting.NoticeShowerAutoHideMS;
       }
       let mixValidExpiration = 10;
-      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品有效期最少多少天)
-      {
-          noticeShowerAutoHideMS = this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品有效期最少多少天;
-      }
-      let suguestValidExpiration = 90;
-      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品建议有效期大于多少天)
-      {
-          suguestValidExpiration = this.state.AMDMSetting.UserInterfaceSetting._默认可装入药机的药品建议有效期大于多少天;
-      }
+      let suggestValidExpiration = 90;
       let alarmExpiration = 30;
-      if (this.state && this.state.AMDMSetting && this.state.AMDMSetting.UserInterfaceSetting && this.state.AMDMSetting.UserInterfaceSetting._默认已装入药机的药品有效期小于多少天时提醒)
+      let enableExpirationStrictControl = false;
+      if (this.state.AMDMSetting.ExpirationStrictControlSetting)
       {
-          alarmExpiration = this.state.AMDMSetting.UserInterfaceSetting._默认已装入药机的药品有效期小于多少天时提醒;
+          mixValidExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCanLoadMinExpirationDays;
+          suggestValidExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays;
+          alarmExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultCountThresholdOfLowInventoryAlert;
+          enableExpirationStrictControl = this.state.AMDMSetting.ExpirationStrictControlSetting.Enable;
       }
     return (
       <div className={classesName.main}>
@@ -631,7 +660,7 @@ class SettingManage extends Component {
         >
           <div className={classesName.partName}>用户交互</div>
           <div className={classesName.partContent}>
-              <div className={classesName.flexRow}>在扫描处方二维码后如<div className={classesName.lightWord}>{autoReturnTimeMM/1000}</div>秒未进行操作将返回
+              <div className={classesName.flexRow}>在扫描处方二维码后如<div className={classesName.lightWord}>{autoReturnTimeMS/1000}</div>秒未进行操作将返回
                   <div className={this.state.mouseIn === 'interactive'?classesName.settingBtn:classesName.settingBtnHide }
                        onClick={()=>{
                           this.onChangeMedicineOrderAutoHideWhenNoActionMS();
@@ -649,40 +678,56 @@ class SettingManage extends Component {
                 </div>
           </div>
         </div>
-        <div className={classesName.bestMatchGridWay}>
-          <div className={classesName.partName}>
-            药品出仓顺序
-          </div>
-          <div className={classesName.partContent}>
-            <div>模式1先入仓药品优先</div>
-            <div>模式2临近有效期优先(要求上药时填写有效期,且每个药槽内的药品正确排序)</div>
-          </div>
-        </div>
         <div className={classesName.expiration}
              onMouseEnter={()=>this.setState({mouseIn:'expiration'})}
              onMouseLeave={()=>this.setState({mouseIn:null})}
         >
           <div className={classesName.partName}>药品有效期控制</div>
           <div className={classesName.partContent}>
+              <Switch  checked={enableExpirationStrictControl} checkedChildren="开启" unCheckedChildren="关闭"
+                                onChange={(val)=>{
+                                    let that = this;
+                                    if (val === false)
+                                    {
+                                        let md = Modal.confirm(
+                                            {
+                                                title:'关闭药品有效期严控模式后\r\n将使用先进先出原则进出库,请确认!',
+                                                centered:true,
+                                                onOk:()=>{
+                                                    that.onChangeEnableExpirationStrictControl(val);
+                                                    md.destroy();
+                                                }
+                                                ,onCancel:()=>
+                                                {
+                                                    md.destroy();
+                                                }
+                                            }
+                                        )
+                                    }
+                                    else
+                                    {
+                                        that.onChangeEnableExpirationStrictControl(val);
+                                    }
+                                }}/>
               <div className={classesName.grayWord}>每个药品的有效期控制策略可单独在药品管理中设置</div>
              <div className={classesName.flexRow}>默认可装入药机的药品,有效期至少<div className={classesName.lightWord}>{mixValidExpiration}</div>天
                  <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
                       onClick={()=>{
-                          this.onChange_默认可装入药机的药品有效期最少多少天();
+                          this.onChangeDefaultCanLoadMinExpirationDays();
                       }}
                  ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
              </div>
-              <div className={classesName.flexRow}>默认建议有效期大于<div className={classesName.lightWord}>{suguestValidExpiration}</div>天
+              <div className={classesName.flexRow}>默认建议有效期大于<div className={classesName.lightWord}>{suggestValidExpiration}</div>天
                   <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
                        onClick={()=>{
-                           this.onChange_默认可装入药机的药品建议有效期大于多少天();
+                           this.onChangeDefaultSuggestLoadMinExpirationDays();
                        }}
                   ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
               </div>
             <div className={classesName.flexRow}>默认当有效期小于<div className={classesName.lightWord}>{alarmExpiration}</div>天时提醒
                 <div className={this.state.mouseIn === 'expiration'?classesName.settingBtn:classesName.settingBtnHide }
                      onClick={()=>{
-                         this.onChange_默认已装入药机的药品有效期小于多少天时提醒();
+                         this.onChangeDefaultCountThresholdOfLowInventoryAlert();
                      }}
                 ><div className="iconfont icon-shezhi" style={{fontSize: 20}}/></div>
             </div>

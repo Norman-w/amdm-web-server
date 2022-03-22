@@ -63,21 +63,17 @@
 {
   composes: partLight;
 }
-.bestMatchGridWay
-{
-  composes: part;
-}
 .expiration
 {
-  composes: partLight;
+  composes: part;
 }
 .errorProcessMethod
 {
-  composes: part;
+  composes: partLight;
 }
 .medicineWarning
 {
-composes: partLight;
+composes: part;
 }
 .flexRow
 {
@@ -104,4 +100,13 @@ composes: partLight;
 .grayWord
 {
   color: lightgray;
+}
+.center
+{
+  width:100%;
+  height: 100%;
+  display:  flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
