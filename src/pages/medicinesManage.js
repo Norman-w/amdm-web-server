@@ -275,7 +275,8 @@ class MedicinesManage extends Component {
         params:medicine,
         onFinish:(res)=>
         {
-          message.warn(JSON.stringify(res));
+          // message.warn(JSON.stringify(res));
+          console.log(res)
           message.success('药品信息已保存');
           that.onSearchMedicine(that.state.pagination);
         },
