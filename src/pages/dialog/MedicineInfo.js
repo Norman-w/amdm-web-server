@@ -109,9 +109,9 @@ class MedicineInfo extends Component {
         }
         //endregion
         //region 长度宽度高度警告信息
-        let longWarning = this.getWarningLabel(this.state.BoxLongMM, '药盒长度','毫米', 30,300);
-        let widthWarning = this.getWarningLabel(this.state.BoxWidthMM, '药盒宽度','毫米', 30,300);
-        let heightWarning = this.getWarningLabel(this.state.BoxHeightMM, '药盒高度','毫米', 30,300);
+        let longWarning = this.getWarningLabel(this.state.BoxLongMM, '药盒长度','毫米', 30,250);
+        let widthWarning = this.getWarningLabel(this.state.BoxWidthMM, '药盒宽度','毫米', 30,180);
+        let heightWarning = this.getWarningLabel(this.state.BoxHeightMM, '药盒高度','毫米', 5,100);
         //endregion
       let CLMEDWarning = this.getWarningLabel(this.state.CLMED, '最小有效期天数', '天', 1,this.state.SLMED>0?this.state.SLMED:365);
       let SLMEDWarning = this.getWarningLabel(this.state.SLMED, '建议有效期天数', '天', this.state.CLMED>0?this.state.CLMED:1,365*3);

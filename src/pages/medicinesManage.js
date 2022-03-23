@@ -48,41 +48,41 @@ class MedicinesManage extends Component {
       dataIndex: 'Company',
       key: 'Company',
       // width:100,
-    },
+    }, {
+          title: '药盒长mm',
+          key: 'BoxLongMM',
+          dataIndex: 'BoxLongMM',
+          width: 60,
+      },
     {
-      title: '药盒宽',
+      title: '药盒宽mm',
       key: 'BoxWidthMM',
       dataIndex: 'BoxWidthMM',
       width:60,
     },
     {
-      title: '药盒高',
+      title: '药盒高mm',
       dataIndex: 'BoxHeightMM',
       key: 'BoxHeightMM',
       width:60,
     },
-    {
-      title: '药盒长',
-      key: 'BoxLongMM',
-      dataIndex: 'BoxLongMM',
-      width: 60,
-    },
+
       {
-          title: '最小有效期',
+          title: '最小有效期(天)',
           key: 'CLMED',
           dataIndex: 'CLMED',
           width: 80,
       },
       {
-          title: '建议有效期',
+          title: '建议有效期(天)',
           key: 'SLMED',
           dataIndex: 'SLMED',
           width: 80,
       },
       {
-          title: '有效期预警',
-          key: 'CTOLIA',
-          dataIndex: 'CTOLIA',
+          title: '临期预警提前(天)',
+          key: 'DTOEA',
+          dataIndex: 'DTOEA',
           width: 80,
       },
       {
@@ -276,9 +276,15 @@ class MedicinesManage extends Component {
         onFinish:(res)=>
         {
           // message.warn(JSON.stringify(res));
-          console.log(res)
-          message.success('药品信息已保存');
-          that.onSearchMedicine(that.state.pagination);
+            if(res&&res.UpdatedMedicine)
+            {
+                message.success('药品信息已保存');
+                that.onSearchMedicine(that.state.pagination);
+            }
+            else
+            {
+                message.error('更新药品信息错误:'+(res&&res.ErrMsg?res.ErrMsg:'无返回结果'));
+            }
         },
         onFail:(t)=>
         {
