@@ -167,9 +167,9 @@ class Main extends Component {
               <Menu.Item key="7"
                          onClick={()=>{this.setState({currentPage:<FulfillRecord/>})}}
               >取药记录</Menu.Item>
-              <Menu.Item key="gridUsingRecords"
-                         onClick={()=>{this.setState({currentPage:<GridsUsingRecord/>})}}
-              >药槽使用记录</Menu.Item>
+              {/*<Menu.Item key="gridUsingRecords"*/}
+              {/*           onClick={()=>{this.setState({currentPage:<GridsUsingRecord/>})}}*/}
+              {/*>药槽使用记录</Menu.Item>*/}
             </SubMenu>
                          <SubMenu key="sub1" icon={<UserOutlined />} title="账户管理">
                            <Menu.Item key="3"

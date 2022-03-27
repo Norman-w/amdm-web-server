@@ -1,0 +1,46 @@
+.main
+{
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+  /*box-shadow: 0 0 1px 1px sandybrown;*/
+}
+.content
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /*box-shadow: 0 0 1px 1px sandybrown;*/
+}
+
+.cpName
+{
+  font-size: 30px;
+  text-shadow: 2px 2px 3px skyblue;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.logo
+{
+  color: darkcyan;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  text-shadow: 2px 2px 3px skyblue;
+  font-weight: bold;
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  box-shadow: 0 0 5px 1px skyblue;
+}
+.subTitle
+{
+  margin-top: 20px;
+  font-size: 18px;
+}

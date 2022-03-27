@@ -6,7 +6,8 @@ import {message, Modal, Spin, Switch} from 'antd';
 import NumberInputForm from "./dialog/NumberInputForm";
 import TimeSelector from 'dragable-time-selector/build'
 import LostAmdmConnect from "./component/LostAMDMConnect";
-
+import CustomerSupport from "./dialog/CustomerSupport";
+import { WhatsAppOutlined } from '@ant-design/icons';
 
 class SettingManage extends Component {
   state={
@@ -570,6 +571,18 @@ class SettingManage extends Component {
     return ""+hh.toString().padStart(2,'0')+":"+mm.toString().padStart(2,'0')
   }
 
+  onClickCustomerSupport()
+  {
+    let md = Modal.info(
+      {
+        icon:null,
+        content:<CustomerSupport/>,
+        centered:true,
+        width:500,
+      }
+    )
+  }
+
 
   render() {
       if (!this.state.PeripheralsStatus || !this.state.AMDMSetting)
@@ -735,10 +748,15 @@ class SettingManage extends Component {
         </div>
         <div className={classesName.errorProcessMethod}>
           <div className={classesName.partName}>故障处置方案</div>
-          <div className={classesName.partContent}>通知工作人员 是否开启
-            工作人员手机号设置
+          <div className={classesName.partContent}>
+            故障信息接收人:
+            <div id={'接收故障信息的人员列表'}>
+
+            </div>
             故障后是否进入维护状态
-            进入维护状态后需要工作人员手工复位(在药机端)</div>
+            进入维护状态后需要工作人员手工复位(在药机端)
+            <div onClick={()=>{this.onClickCustomerSupport()}}><WhatsAppOutlined style={{ fontSize: '16px', color: '#08c',userSelect:'none', cursor:'pointer' }}/></div>
+          </div>
         </div>
         <div className={classesName.medicineWarning}>
           <div className={classesName.partName}>药品预警</div>
