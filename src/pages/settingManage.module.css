@@ -110,3 +110,34 @@ composes: part;
   justify-content: center;
   align-items: center;
 }
+.addUserBtn
+{
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  border: 1px dashed cadetblue;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+}
+.heng
+{
+  width: 60%;
+  height: 10%;
+  /*border: skyblue 1px solid;*/
+  background-color: silver;
+  /*box-shadow: 0 0 3px 1px skyblue;*/
+  position: absolute;
+  top: 45%;
+  left: 20%;
+}
+.shu
+{
+  composes: heng;
+  transform: rotateZ(90deg);
+}

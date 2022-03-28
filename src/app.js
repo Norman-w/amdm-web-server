@@ -2,19 +2,13 @@ import {message} from 'antd'
 
 class App {
     debugMode = true;
-  setting4= {
-    SnapshotUrlBase :'http://10.10.10.17',
-    clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
-    clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
-    serverSideApiRouterUrl:'http://10.10.10.17/serverside/apirouter/',
-  };
-    setting= {
+    setting1= {
         SnapshotUrlBase :'http://192.168.2.191',
         clientSideAMDMControlPanelRouterUrl:'http://192.168.2.191:8080/',
         clientSideApiRouterUrl:'http://192.168.2.191/clientside/apirouter/',
         serverSideApiRouterUrl:'http://192.168.2.191/serverside/apirouter/',
     };
-    setting1= {
+    setting= {
         SnapshotUrlBase :'http://10.10.10.17',
         clientSideAMDMControlPanelRouterUrl:'http://10.10.10.17:8080/',
         clientSideApiRouterUrl:'http://10.10.10.17/clientside/apirouter/',
@@ -259,6 +253,13 @@ class App {
                     {
                         // console.log('请求完了request以后,response是:', response);
                         let result = response.json();
+                        result.catch(reason => {
+                          console.log('在fetch中,未超时但执行response->json过程失败:',reason);
+                          if (onFail)
+                          {
+                            onFail(false);
+                          }
+                        });
                         // console.log('request请求完,result:', result);//result是一个promise
                         result.then(
                             (json) => {
