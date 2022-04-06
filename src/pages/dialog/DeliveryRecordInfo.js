@@ -188,6 +188,12 @@ class DeliveryRecordInfo extends React.Component{
     let record = this.state.record;
     return (
         <Table
+            style={{
+                borderLeft:'1px dashed black',
+                borderBottom:'1px dashed black',
+                // boxShadow:'0px 0px 3px 3px black'
+                marginLeft:10,
+            }}
             size={'small'}
             pagination={{hideOnSinglePage: true}}
             columns={this.detailColumns}
@@ -198,6 +204,12 @@ class DeliveryRecordInfo extends React.Component{
               return <div>
                 {/*总记录数:{currentPageData.length}*/}
                 <div id={'凭证信息行'} className={classNames.imagesLine}>
+                    <div id={'就诊信息'} className={classNames.prescribing}>
+                        <div className={classNames.row}><div className={classNames.title}>就诊时间</div><div>2022年04月03日21:05:34</div></div>
+                        <div className={classNames.row}><div className={classNames.title}>就诊科室</div><div>呼吸外</div></div>
+                        <div className={classNames.row}><div className={classNames.title}>主治医师</div><div>王大拿</div></div>
+                        <div className={classNames.row}><div className={classNames.title}>诊断信息</div><div>患者胸痛3日未见好转,前来就医,胸X光片未见明显异常显影,应属神经性胸痛.</div></div>
+                    </div>
                   <div id={'小票列'}>
                     <div>付药单据图</div>
                     {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {DatePicker, message, Table, Tag} from 'antd';
+import {Button, DatePicker, message, Table, Tag,Input} from 'antd';
 // import classNames from './instockRecord.module.css'
 import app from "../app";
 import classNames from './fulfillRecord.module.css'
@@ -10,6 +10,7 @@ import {Utils} from "./utils";
 // const {Search} = Input;
 const defaultPageSize = 10;
 const { RangePicker } = DatePicker;
+const {Search} = Input;
 
 
 
@@ -18,7 +19,10 @@ class FulfillRecord extends Component {
     data:[],
     searchingStartTime:'',
     searchingEndTime:'',
+      //用于搜索的处方编号
     searchingPrescriptionId:'',
+      //用于搜索的患者名称
+      searchingPatientName:'',
     loading:false,
     pagination: {
       position:['topRight','bottomRight'],
@@ -33,12 +37,16 @@ class FulfillRecord extends Component {
       key: 'Id',
       render:t=><div style={{color:'gray'}}>{t}</div>
     },
-    {
-      title: '处方号',
-      dataIndex: 'PrescriptionId',
-      key: 'PrescriptionId',
-      render:t=><div style={{color:'darkgreen'}}>{t}</div>
-    },
+      {
+          title: '处方号',
+          dataIndex: 'PrescriptionId',
+          key: 'PrescriptionId',
+          render:t=><div style={{color:'darkgreen'}}>{t}</div>
+      },{
+          title: '患者姓名',
+          dataIndex: 'PatientName',
+          key: 'PatientName',
+      },
     {
       title: '总数',
       dataIndex: 'TotalMedicineCount',
@@ -114,7 +122,8 @@ class FulfillRecord extends Component {
           let searchParam = {
             fields: '*',
             pageNum: pageNum,
-            searchingPrescriptionId:'',
+            prescriptionId:this.state.searchingPrescriptionId,
+              patientName:this.state.searchingPatientName,
             // pageNum:1,
             getTotalRecordCount: true,
             pageSize: pageSize
@@ -204,6 +213,26 @@ class FulfillRecord extends Component {
         </div>
         <div className={classNames.toolsLine}>
           <div className={classNames.searchArea}>
+              <div className={classNames.nameArea}>
+                  <div className={classNames.nameLabel}>处方编号:</div>
+                  <Search
+                      placeholder="请输入处方编号"
+                      enterButton
+                      value={this.state.searchingPrescriptionId}
+                      onSearch={onSearchDeliveryRecord}
+                      onChange={(v)=>{this.setState({searchingPrescriptionId:v.target.value})}}
+                  />
+              </div>
+              <div className={classNames.nameArea}>
+                  <div className={classNames.nameLabel}>患者姓名:</div>
+                  <Search
+                      placeholder="请输入患者姓名"
+                      enterButton
+                      value={this.state.searchingPatientName}
+                      onSearch={onSearchDeliveryRecord}
+                      onChange={(v)=>{this.setState({searchingPatientName:v.target.value})}}
+                  />
+              </div>
             <div className={classNames.noteArea}>在指定时间段内搜索:</div>
             <div className={classNames.timeSpanArea}>
               <RangePicker showTime
