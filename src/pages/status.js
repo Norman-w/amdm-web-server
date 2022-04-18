@@ -11,12 +11,13 @@ class Status extends Component {
         IsWorking: false,
         StatusName: '正在获取交互状态...',
         OnLine: false,
+        PeripheralsStatus:null, MaintenanceStatus:null,TodayPrescriptionCount:0,TodayMedicineCount:0
     }
     interval;
 
     refreshPeripheralsStatus()
     {
-        let api = 'peripheralsstatus.get';
+        let api = 'status.get';
         let that = this;
         app.doPost(
             {
@@ -31,7 +32,12 @@ class Status extends Component {
                         fields: '*'
                     },
                 finish: (res) => {
-                    that.setState({PeripheralsStatus: res.PeripheralsStatus})
+                    that.setState({
+                        PeripheralsStatus: res.PeripheralsStatus,
+                        MaintenanceStatus: res.MaintenanceStatus,
+                        TodayPrescriptionCount:res.TodayPrescriptionCount,
+                        TodayMedicineCount:res.TodayMedicineCount
+                    })
                 }
             }
         )
@@ -78,7 +84,7 @@ class Status extends Component {
 
     render() {
         let status = this.state.PeripheralsStatus;
-        let acs = status ? status.WarehousesACStatus : [];
+        let acs = status && status.WarehousesACStatus ? status.WarehousesACStatus : [];
         let statusName = this.state.StatusName;
         let onLine = this.state.OnLine;
         return (
@@ -99,12 +105,12 @@ class Status extends Component {
                     </div>
                     <div className={classNames.countLine}>
                         <div className={classNames.countArea}>
-                            <div className={classNames.todayTotal}>3</div>
-                            <div className={classNames.infoGray}>今日已取药数量</div>
+                            <div className={classNames.todayTotal}>{this.state.TodayPrescriptionCount}</div>
+                            <div className={classNames.infoGray}>今日处方数量</div>
                         </div>
                         <div className={classNames.countArea}>
-                            <div className={classNames.todayTotal}>541845119</div>
-                            <div className={classNames.infoGray}>总已取药数量</div>
+                            <div className={classNames.todayTotal}>{this.state.TodayMedicineCount}</div>
+                            <div className={classNames.infoGray}>今日已取药数量</div>
                         </div>
                     </div>
                     {/*<Page></Page>*/}

@@ -16,10 +16,15 @@ export const WarehouseAc = (props) => {
              onMouseLeave={()=>{setEditMode(false)}}
         >
             <div className={classNames.indexText}>药仓{props.warehouse.WarehouseIndexId+1}</div>
+            <div className={classNames.status}><div className="iconfont icon-shidu" style={{fontSize: 30}}>
+            </div>
+                <div className={classNames.statusText}>
+                    当前湿度:55%</div>
+            </div>
             <div className={classNames.status}><div className="iconfont icon-wenduji" style={{fontSize: 30}}>
             </div>
                 <div className={classNames.statusText}>
-                当前温度:{curr}℃</div>
+                    当前温度:{curr}℃</div>
             </div>
             <div className={classNames.status}><div className="iconfont icon-wendushezhi2-05-05" style={{fontSize: 30}}>
             </div>

@@ -53,7 +53,7 @@ class Main extends Component {
   {
       console.log('开始执行测试请求post');
       //region 执行一个获取付药机8080接口传输的数据
-      let api = 'peripheralsstatus.get';
+      let api = 'status.get';
       // let that = this;
       app.doPost(
           {

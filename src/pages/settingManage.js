@@ -12,6 +12,7 @@ import {WhatsAppOutlined, UserOutlined, AntDesignOutlined,QuestionCircleOutlined
 
 class SettingManage extends Component {
   state = {
+      MaintenanceStatus:null,
     PeripheralsStatus: null,
     mouseIn: null,
     AMDMSetting: null,
@@ -35,7 +36,7 @@ class SettingManage extends Component {
   }
 
   refreshPeripheralsStatus() {
-    let api = 'peripheralsstatus.get';
+    let api = 'status.get';
     let that = this;
     app.doPost2(
       {
@@ -51,7 +52,7 @@ class SettingManage extends Component {
             forceRefresh: true,
           },
         onFinish: (res) => {
-          that.setState({PeripheralsStatus: res.PeripheralsStatus, onLine: true})
+          that.setState({PeripheralsStatus: res.PeripheralsStatus,MaintenanceStatus:res.MaintenanceStatus, onLine: true})
           // console.log('目标温度:',res.PeripheralsStatus.WarehousesACStatus[0]);
         }
         , onFail: (res) => {
@@ -516,6 +517,29 @@ class SettingManage extends Component {
     )
   }
 
+    clearError()
+    {
+        let that = this;
+        let api = "status.clearerror"
+        app.doPost2(
+            {
+                url: app.setting.clientSideAMDMControlPanelRouterUrl,
+                apiName: api,
+                params:
+                    {
+                    },
+                onFinish: (res) => {
+                    if (res && !res.IsError) {
+                        that.setState({MaintenanceStatus:0});
+                        message.success('已重置付药机为正常状态');
+                    } else {
+                        message.error('操作错误:' + (res && res.ErrMsg ? res.ErrMsg : '未知错误'));
+                    }
+                }
+            }
+        )
+    }
+
 
   render() {
     if (!this.state.PeripheralsStatus || !this.state.AMDMSetting) {
@@ -549,6 +573,26 @@ class SettingManage extends Component {
       suggestValidExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultSuggestLoadMinExpirationDays;
       alarmExpiration = this.state.AMDMSetting.ExpirationStrictControlSetting.DefaultDaysThresholdOfExpirationAlert;
       enableExpirationStrictControl = this.state.AMDMSetting.ExpirationStrictControlSetting.Enable;
+    }
+    let hasError = this.state.MaintenanceStatus !== 0;
+    let maintenanceStatusString = "";
+    switch (this.state.MaintenanceStatus)
+    {
+        case 0:
+            maintenanceStatusString = "运行正常";
+            break;
+        case 1:
+            maintenanceStatusString = "硬件故障";
+            break;
+        case 2:
+            maintenanceStatusString = "软件故障";
+            break;
+        case 3:
+            maintenanceStatusString = "系统维护中";
+            break;
+        case 4:
+            maintenanceStatusString = "紫外线杀菌中";
+            break;
     }
     return (
       <div className={classesName.main}>
@@ -704,8 +748,10 @@ class SettingManage extends Component {
           <div className={classesName.partName}>故障处置方案</div>
           <div className={classesName.partContent}>
             <div className={classesName.flexRow}>
-            <Tag color="success">运行正常</Tag>
-            <Button size={'small'} type={'primary'}>复位</Button>
+            <Tag color={hasError ? "volcano":"success"}>{maintenanceStatusString}</Tag>
+            <Button hidden={!hasError} size={'small'} type={'primary'}
+                    onClick={this.clearError.bind(this)}
+            >复位</Button>
             </div>
             <div className={classesName.flexRow}>
 
@@ -750,12 +796,38 @@ class SettingManage extends Component {
             </Tooltip>
           </div>
         </div>
-        <div className={classesName.medicineWarning}>
+        <div className={classesName.medicineWarning}
+             onMouseEnter={() => this.setState({mouseIn: 'medicineWarning'})}
+             onMouseLeave={() => this.setState({mouseIn: null})}
+        >
           <div className={classesName.partName}>药品预警</div>
-          <div className={classesName.partContent}>是否接收库存预警消息
-            库存预警消息的接收人设置
-            是否接受药品有效期预警
-            药品有效期预警消息接收人设置
+          <div className={classesName.partContent}>
+              <div className={classesName.flexRow}>
+                  药品库存预警及药品有效期预警消息接收人:
+                  <Avatar.Group
+                      id={'接收故障信息的人员列表'}
+                      maxCount={2}
+                      maxPopoverTrigger="click"
+
+                      maxStyle={{color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer'}}
+                  >
+                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
+                      <Avatar style={{backgroundColor: '#f56a00'}}>K</Avatar>
+                      <Tooltip title="Ant User" placement="top">
+                          <Avatar style={{backgroundColor: '#87d068'}} icon={<UserOutlined/>}/>
+                      </Tooltip>
+                      <Avatar style={{backgroundColor: '#1890ff'}} icon={<AntDesignOutlined/>}/>
+                  </Avatar.Group>
+                  <Tooltip title={'点击添加用户'}>
+                      <div
+                          className={this.state.mouseIn === 'medicineWarning' ? classesName.settingBtn : classesName.settingBtnHide}>
+                          <div className={classesName.addUserBtn}>
+                              <div className={classesName.heng}></div>
+                              <div className={classesName.shu}></div>
+                          </div>
+                      </div>
+                  </Tooltip>
+              </div>
           </div>
         </div>
       </div>
