@@ -507,7 +507,7 @@ class SettingManage extends Component {
   }
 
   onClickCustomerSupport() {
-    let md = Modal.info(
+    Modal.info(
       {
         icon: null,
         content: <CustomerSupport/>,
@@ -540,6 +540,34 @@ class SettingManage extends Component {
         )
     }
 
+    onChangeDisableAMDMWhenDeliveryFailed(val)
+    {
+        let that = this;
+        let api = "amdmsetting.update"
+        app.doPost2(
+            {
+                url: app.setting.clientSideAMDMControlPanelRouterUrl,
+                apiName: api,
+                params:
+                    {
+                        field: "TroubleshootingPlanSetting.DisableAMDMWhenDeliveryFailed",
+                        value: val,
+                    },
+                onFinish: (res) => {
+                    if (res && !res.IsError) {
+                        // console.log(res);
+                        let old = that.state.AMDMSetting;
+                        old.TroubleshootingPlanSetting.DisableAMDMWhenDeliveryFailed = res.NewValue;
+                        that.setState({AMDMSetting: old});
+                        message.success(res.NewValue?"已设置为:当药机发生取药故障时将会停用药机":"已设置为:当药机发生取药故障时,不会影响其他用户取药");
+                    } else {
+                        message.error('操作错误:' + (res && res.ErrMsg ? res.ErrMsg : '未知错误'));
+                    }
+                }
+            }
+        )
+    }
+
 
   render() {
     if (!this.state.PeripheralsStatus || !this.state.AMDMSetting) {
@@ -548,8 +576,8 @@ class SettingManage extends Component {
     if (!this.state.onLine) {
       return <div className={classesName.center}><LostAmdmConnect/></div>
     }
-    let status = this.state.PeripheralsStatus;
-    let acs = status ? status.WarehousesACStatus : [];
+      const status = this.state.PeripheralsStatus;
+    const acs = (status && status.WarehousesACStatus) ? status.WarehousesACStatus : [];
     let UVStartTime = null;
     let UVEndTime = null;
     if (this.state.AMDMSetting.DevicesSetting.UVLampSetting) {
@@ -774,8 +802,8 @@ class SettingManage extends Component {
                 <div
                   className={this.state.mouseIn === 'error' ? classesName.settingBtn : classesName.settingBtnHide}>
                   <div className={classesName.addUserBtn}>
-                    <div className={classesName.heng}></div>
-                    <div className={classesName.shu}></div>
+                    <div className={classesName.heng}/>
+                    <div className={classesName.shu}/>
                   </div>
                 </div>
               </Tooltip>
@@ -784,7 +812,7 @@ class SettingManage extends Component {
             若发生卡药故障时停用
             <Switch checked={enableExpirationStrictControl} checkedChildren="是" unCheckedChildren="否"
                     onChange={(val) => {
-
+                        this.onChangeDisableAMDMWhenDeliveryFailed(val);
                     }}/>
             </div>
             <Tooltip title="联系客服" placement="top">
@@ -822,8 +850,8 @@ class SettingManage extends Component {
                       <div
                           className={this.state.mouseIn === 'medicineWarning' ? classesName.settingBtn : classesName.settingBtnHide}>
                           <div className={classesName.addUserBtn}>
-                              <div className={classesName.heng}></div>
-                              <div className={classesName.shu}></div>
+                              <div className={classesName.heng}/>
+                              <div className={classesName.shu}/>
                           </div>
                       </div>
                   </Tooltip>

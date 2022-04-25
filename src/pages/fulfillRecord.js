@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal,Button, DatePicker, message, Table, Tag, Input} from 'antd';
+import {Modal, DatePicker, message, Table, Tag, Input} from 'antd';
 // import classNames from './instockRecord.module.css'
 import app from "../app";
 import classNames from './fulfillRecord.module.css'
