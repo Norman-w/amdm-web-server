@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import classNames from "./fulfillRecord.module.css";
 import {Radio, Table, Input, DatePicker, message} from "antd";
-import {Utils} from "./utils";
-import DeliveryRecordInfo from "./dialog/DeliveryRecordInfo";
 import app from "../app";
 const {Search} = Input;
 const { RangePicker } = DatePicker;
@@ -51,7 +49,12 @@ class LogView extends Component {
       pageSize: defaultPageSize,
     },
   }
-  onSearchLog(pagination
+
+  componentDidMount() {
+      this.onSearchLog(this.state.pagination);
+  }
+
+    onSearchLog(pagination
                          // ,filters,sorter
   ) {
     if (this.state.loading) {
