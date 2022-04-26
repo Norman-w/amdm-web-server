@@ -15,6 +15,7 @@ class AccountShower extends Component {
                 editing:this.props.creating,
                 requesting:false,
             }
+            // console.log('初始化账号显示页:', state)
             this.setState(state)
         }
     }
@@ -33,12 +34,13 @@ class AccountShower extends Component {
             Department:nextProps.account.Department,
             CreateTime:nextProps.account.CreateTime,
             ModifiedTime:nextProps.account.ModifiedTime,
+            Mobile:nextProps.account.Mobile,
         }
         this.setState(newState)
     }
 
     state={
-        Id:0,Name:'',Age:0,UserName:'',Sex:'',Department:'',CreateTime:'',ModifiedTime:'',
+        Id:0,Name:'',Age:0,UserName:'',Sex:'',Department:'',CreateTime:'',ModifiedTime:'',Mobile:'',
         editing:false,
         requesting:false,
     }

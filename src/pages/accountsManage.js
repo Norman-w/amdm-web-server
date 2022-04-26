@@ -114,6 +114,7 @@ class AccountsManage extends Component {
                               }
                               else
                               {
+                                  // console.log('读取到所有账户:', res.Accounts);
                                   that.setState({requesting:false, accounts:res.Accounts});
                               }
                           },
@@ -166,9 +167,9 @@ class AccountsManage extends Component {
                       {
                         for (let i = 0; i < this.state.accounts.length; i++) {
                           let inList = this.state.accounts[i];
-                          let inRef = refAccount;
-                          console.log('在inlist', inList, '在ref', inRef);
-                          if (!inList || !inRef)
+                          // let inRef = refAccount;
+                          // console.log('在inlist', inList, '在ref', inRef);
+                          if (!inList || !refAccount)
                           {
                             continue;
                           }
