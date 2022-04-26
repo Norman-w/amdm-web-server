@@ -106,7 +106,8 @@ class FulfillRecord extends Component {
 
     onClickDeleteFulfillRecord(record) {
         let that = this;
-        let md = Modal.warn({
+        let md = Modal.confirm({
+            centered:true,
             title:'这将删除这条取药记录',
             content:<div>该功能仅限维护人员使用且操作不可逆,确认继续吗?</div>,
             onCancel:()=>{md.destroy()},

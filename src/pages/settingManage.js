@@ -660,6 +660,7 @@ class SettingManage extends Component {
     }
 
     onClickSetErrorAlertReceiveUsersBtn() {
+        console.log('调用更新故障处置方案联系人函数');
         this.updateSMSReceiver("故障处置方案", "TroubleshootingPlanSetting", "AlertReceiveUsers");
     }
 
